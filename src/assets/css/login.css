@@ -1,0 +1,12 @@
+.parentdiv{
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgb(140, 127, 255);
+}
+.childdiv{
+    padding: 20px;
+    background-color: rgb(46, 127, 194);
+    border-radius: 20px;
+}
