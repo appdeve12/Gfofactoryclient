@@ -1,29 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Container, Row, Col, Pagination, Card } from 'react-bootstrap';
-import CustumButton from '../../components/common/CustumButton';
+import {
+  Table,
+  Button,
+  Container,
+  Pagination,
+  Card,
+  Form
+} from 'react-bootstrap';
 import { deleteparticularstockinward, getallstockinwards } from '../../services/allService';
 import { useNavigate } from 'react-router-dom';
 import DeleteModal from './DeleteModal';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 const StockInward = () => {
-    const userDt=useSelector(state=>state.auth.userdata);
-    console.log("userDt",userDt.user)
-    const userdatarole=userDt.user.role;
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+  const userDt = useSelector(state => state.auth.userdata);
+  const userRole = userDt?.user?.role;
+
   const [stockInwardData, setStockInwardData] = useState([]);
-  const [deletemodal,setdeletemodal]=useState(false)
+  const [filterData, setFilterData] = useState([]);
+  const [search, setSearch] = useState('');
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [seleteddeleetdid,setseleteddeleetdid]=useState("")
   const rowsPerPage = 5;
 
-  const [addStockInward, setAddStockInward] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedDeleteId, setSelectedDeleteId] = useState('');
 
+  // Fetch all stock inward data
   const fetchStockInwardData = async () => {
     try {
       const response = await getallstockinwards();
       if (response.status === 200) {
-        setStockInwardData(response.data.materials);
+        const data = response.data.materials;
+        setStockInwardData(data);
+        setFilterData(data);
       }
     } catch (error) {
       console.error('Error fetching stock inward data:', error);
@@ -34,50 +50,117 @@ const StockInward = () => {
     fetchStockInwardData();
   }, []);
 
+  // Filter by search + date
+  useEffect(() => {
+    const searchLower = search.toLowerCase();
+    const filtered = stockInwardData.filter(item => {
+      const nameMatch = item.material_Name.toLowerCase().includes(searchLower);
+      const date = new Date(item.created_At);
+      const dateMatch =
+        (!startDate || date >= startDate) && (!endDate || date <= endDate);
+      return nameMatch && dateMatch;
+    });
+
+    setFilterData(filtered);
+    setCurrentPage(1);
+  }, [search, startDate, endDate, stockInwardData]);
+
+  // Pagination logic
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = stockInwardData.slice(indexOfFirstRow, indexOfLastRow);
-
-  const totalPages = Math.ceil(stockInwardData.length / rowsPerPage);
-
+  const currentRows = filterData.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filterData.length / rowsPerPage);
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
+  // Helpers
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
-const addstockopen=()=>{
-navigate("/add-stock-inward")
-}
-const editstock=(index)=>{
-  navigate(`/edit-stock-inward/${index}`)
-}
-const deleteModal=(index)=>{
-  setseleteddeleetdid(index)
-setdeletemodal(true)
-}
-const handleClose=()=>{
-  setdeletemodal(true)
-}
-const handleConfirm=async()=>{
-  debugger;
 
-if(seleteddeleetdid){
-  const response=await deleteparticularstockinward(seleteddeleetdid)
-  if(response.status==200){
-toast.success("Deleted Succefully")
-fetchStockInwardData()
-  }
-}
-}
+  const handleAddStock = () => {
+    navigate("/add-stock-inward");
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/edit-stock-inward/${id}`);
+  };
+
+  const handleDeleteClick = (id) => {
+    setSelectedDeleteId(id);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setDeleteModalOpen(false);
+    setSelectedDeleteId('');
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      if (selectedDeleteId) {
+        const response = await deleteparticularstockinward(selectedDeleteId);
+        if (response.status === 200) {
+          toast.success("Deleted successfully");
+          fetchStockInwardData();
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to delete");
+    } finally {
+      handleCloseModal();
+    }
+  };
+
   return (
     <Container className="mt-4">
       <Card>
-        <Card.Header className="d-flex justify-content-between align-items-center">
+        <Card.Header className="d-flex justify-content-between align-items-center flex-wrap gap-2">
           <h4 className="mb-0">Material Stock Inward</h4>
-          <Button variant="outline-primary" size="sm" onClick={()=>addstockopen()}>Add Stock</Button>
+          <Button variant="outline-primary" size="sm" onClick={handleAddStock}>
+            Add Stock
+          </Button>
         </Card.Header>
 
         <Card.Body>
+          {/* Search and Filter Controls */}
+          <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
+            <Form.Control
+              type="text"
+              placeholder="Search material..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ maxWidth: '200px' }}
+            />
+
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              placeholderText="Start Date"
+              className="form-control"
+              maxDate={new Date()}
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              placeholderText="End Date"
+              className="form-control"
+              maxDate={new Date()}
+            />
+
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setSearch('');
+                setStartDate(null);
+                setEndDate(null);
+              }}
+            >
+              Clear Filters
+            </Button>
+          </div>
+
+          {/* Table */}
           <Table responsive bordered hover>
             <thead className="table-dark">
               <tr>
@@ -88,10 +171,9 @@ fetchStockInwardData()
                 <th>Supplier</th>
                 <th>Remarks</th>
                 <th>User</th>
-              {userdatarole=="supervisior" &&   <th>Action</th>}  
+                {userRole === 'supervisior' && <th>Action</th>}
               </tr>
             </thead>
-
             <tbody>
               {currentRows.length === 0 ? (
                 <tr>
@@ -107,11 +189,25 @@ fetchStockInwardData()
                     <td>{item.supplier || 'N/A'}</td>
                     <td>{item.remarks || 'N/A'}</td>
                     <td>{item.user?.name || 'N/A'}</td>
-                           {userdatarole=="supervisior" &&   <td>
-                      {/* Actions like edit/delete can go here */}
-                      <Button variant="outline-primary" size="sm"onClick={()=>editstock(item._id)}>Edit</Button>{' '}
-                      <Button variant="outline-danger" size="sm"onClick={()=>deleteModal(item._id)}>Delete</Button>
-                    </td>}
+                    {userRole === 'supervisior' && (
+                      <td>
+                        <Button
+                          variant="outline-primary"
+                          size="sm"
+                          onClick={() => handleEdit(item._id)}
+                          className="me-2"
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleDeleteClick(item._id)}
+                        >
+                          Delete
+                        </Button>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
@@ -134,7 +230,15 @@ fetchStockInwardData()
           )}
         </Card.Body>
       </Card>
-      {deletemodal && <DeleteModal handleClose={handleClose} handleConfirm={handleConfirm} show={deletemodal}></DeleteModal>}
+
+      {/* Delete Modal */}
+      {deleteModalOpen && (
+        <DeleteModal
+          show={deleteModalOpen}
+          handleClose={handleCloseModal}
+          handleConfirm={handleConfirmDelete}
+        />
+      )}
     </Container>
   );
 };

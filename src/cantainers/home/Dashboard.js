@@ -1,73 +1,93 @@
-import React from 'react'
-import { useEffect } from 'react'
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { dashboardstats } from '../../services/allService';
-import { Table, Button, Container, Row, Col, Pagination, Card } from 'react-bootstrap';
+import {
+  Table,
+  Container,
+  Pagination,
+  Card,
+  Form,
+} from 'react-bootstrap';
+
 const Dashboard = () => {
-  const [dashboardstat,setdashboardstats]=useState([]);
-  const [parsedata,setparsdata]=useState([])
-    const [currentPage, setCurrentPage] = useState(1);
-    const [seleteddeleetdid,setseleteddeleetdid]=useState("")
-    const rowsPerPage = 5;
-  const fetchdashboardstats=async()=>{
-    try{
-const response=await dashboardstats();
-if(response.status==200){
-console.log(response.data)
-setdashboardstats(response.data.data);
-parseddata(response.data.data)
-}
-    }catch(error){
+  const [search, setSearch] = useState('');
+  const [data, setData] = useState([]);             // All data
+  const [filteredData, setFilteredData] = useState([]); // Filtered data
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
+
+  // Fetch data from API
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await dashboardstats();
+      if (response.status === 200) {
+        const formattedData = response.data.data.map((item) => ({
+          material_Name: item.material_Name,
+          total_stock_in: item.total_stock_in,
+          total_stock_out: item.total_stock_out,
+          current_stock: item.current_stock,
+        }));
+        setData(formattedData);
+        setFilteredData(formattedData);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
     }
-  }
-  const parseddata=(data)=>{
-    const parsed=data.map((item)=>({
-      material_Name:item.material_Name,
-      total_stock_in:item.total_stock_in,
-      total_stock_out:item.total_stock_out,
-      current_stock:item.current_stock
-    }))
-    setparsdata(parsed)
-  }
-  useEffect(()=>{
-fetchdashboardstats()
-  },[])
-    const indexOfLastRow = currentPage * rowsPerPage;
+  };
+
+  // Fetch on mount
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  // Filter by search
+  useEffect(() => {
+    const lowerSearch = search.toLowerCase();
+    const result = data.filter(item =>
+      item.material_Name.toLowerCase().includes(lowerSearch)
+    );
+    setFilteredData(result);
+    setCurrentPage(1); // Reset page
+  }, [search, data]);
+
+  // Pagination logic
+  const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = parsedata.slice(indexOfFirstRow, indexOfLastRow);
+  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
-  const totalPages = Math.ceil(parsedata.length / rowsPerPage);
-
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
   return (
-    <>
-      <Container className="mt-4">
+    <Container className="mt-4">
       <Card>
         <Card.Header className="d-flex justify-content-between align-items-center">
           <h4 className="mb-0">Auto Stock Calculator</h4>
-         
         </Card.Header>
 
         <Card.Body>
+          <Form.Control
+            type="text"
+            placeholder="Search material..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="mb-3"
+          />
+
           <Table responsive bordered hover>
             <thead className="table-dark">
               <tr>
                 <th>#</th>
                 <th>Material Name</th>
                 <th>Total Stock In</th>
-                <th> Total Stock Out</th>
+                <th>Total Stock Out</th>
                 <th>Current Stock</th>
-              
-        
-         
               </tr>
             </thead>
-
             <tbody>
               {currentRows.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="text-center">No records found.</td>
+                  <td colSpan="5" className="text-center">
+                    No records found.
+                  </td>
                 </tr>
               ) : (
                 currentRows.map((item, index) => (
@@ -75,36 +95,32 @@ fetchdashboardstats()
                     <td>{indexOfFirstRow + index + 1}</td>
                     <td>{item.material_Name}</td>
                     <td>{item.total_stock_in}</td>
-                          <td>{item.total_stock_out}</td>
-                                <td>{item.current_stock}</td>
-                  
-                       
+                    <td>{item.total_stock_out}</td>
+                    <td>{item.current_stock}</td>
                   </tr>
                 ))
               )}
             </tbody>
           </Table>
 
-          {/* Pagination Controls */}
+          {/* Pagination */}
           {totalPages > 1 && (
             <Pagination className="justify-content-end">
-              {[...Array(totalPages).keys()].map((num) => (
+              {[...Array(totalPages)].map((_, idx) => (
                 <Pagination.Item
-                  key={num + 1}
-                  active={num + 1 === currentPage}
-                  onClick={() => handlePageChange(num + 1)}
+                  key={idx + 1}
+                  active={currentPage === idx + 1}
+                  onClick={() => setCurrentPage(idx + 1)}
                 >
-                  {num + 1}
+                  {idx + 1}
                 </Pagination.Item>
               ))}
             </Pagination>
           )}
         </Card.Body>
       </Card>
-  
     </Container>
-    </>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

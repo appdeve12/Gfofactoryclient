@@ -29,11 +29,12 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="alladmin" element={<ViewAllAdmin />} />
           <Route path="profile" element={<Profile />} />
-          {/* <Route path="stock-inward" element={<StockInward />} />
+          <Route path="stock-inward" element={<StockInward />} />
           <Route path="add-stock-inward" element={<AddEditStockInward />} />
           <Route path="edit-stock-inward/:id" element={<AddEditStockInward />} />
           <Route path="stock-outward" element={<StockOutward />} />
-          <Route path="add-stock-outward" element={<AddStockOutward />} /> */}
+          
+          <Route path="add-stock-outward" element={<AddStockOutward />} />
         </Route>
       </Routes>
       <ToastContainer />

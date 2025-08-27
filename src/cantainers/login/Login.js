@@ -69,11 +69,11 @@ navigate("/")
                 />
                 <CustumButton type="submit" name="Login" onClick={handleSubmit}/>
               </Form>
-              <div className="mt-3 text-center">
+              {/* <div className="mt-3 text-center">
                 <a href="#forgot-password" style={{ fontSize: "0.9rem" }}>
                   Forgot password?
                 </a>
-              </div>
+              </div> */}
               {/* <div className="mt-3 text-center" style={{ fontSize: "0.9rem" }}>
                 Don't have an account? <a href="#signup">Sign Up</a>
               </div> */}
