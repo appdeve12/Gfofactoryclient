@@ -23,16 +23,16 @@ const Header = ({ toggleSidebar,userData }) => {
     localStorage.removeItem('token');
     toast.success("Logout Successfully");
     setTimeout(()=>{
- navigate("/login");
+ navigate("/");
     },2000)
    
   };
 
   const handleProfile = () => {
-    navigate("/profile");
+    navigate("/dashboard/profile");
   };
   const handleMultipleUser=()=>{
-        navigate("/alladmin");
+        navigate("/dashboard/alladmin");
   }
   return(
 <Navbar bg="dark" variant="dark" className="header justify-content-between px-3 position-relative">
@@ -80,10 +80,14 @@ const Header = ({ toggleSidebar,userData }) => {
 const Sidebar = ({ collapsed }) => (
   <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
     <Nav className="flex-column">
-      <Nav.Link as={Link} to="/">
+      <Nav.Link as={Link} to="/dashboard">
         <FaHome className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Home</span>}
       </Nav.Link>
+            {/* <Nav.Link as={Link} to="materialdata">
+        <FaArrowDown className="sidebar-icon" />
+        {!collapsed && <span className="sidebar-label">Material Data</span>}
+      </Nav.Link> */}
       <Nav.Link as={Link} to="stock-inward">
         <FaArrowDown className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Stock Inward</span>}
@@ -94,7 +98,7 @@ const Sidebar = ({ collapsed }) => (
       </Nav.Link>
    
     </Nav>
-  </div>
+  </div>  
 );
 
 const Layout = () => {

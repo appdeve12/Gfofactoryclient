@@ -55,7 +55,7 @@ const StockOutward = () => {
     const lowercased = search.toLowerCase();
 
     const filtered = stockoutsData.filter((item) => {
-      const nameMatch = item.material_Name.toLowerCase().includes(lowercased);
+      const nameMatch = item?.material_Name?.name.toLowerCase().includes(lowercased);
       const date = new Date(item.date);
       const dateMatch =
         (!startDate || date >= startDate) && (!endDate || date <= endDate);
@@ -70,7 +70,7 @@ const StockOutward = () => {
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleAddStockOutward = () => {
-    navigate('/add-stock-outward');
+    navigate('/dashboard/add-stock-outward');
   };
 
   return (
@@ -146,10 +146,10 @@ const StockOutward = () => {
                 currentRows.map((item, index) => (
                   <tr key={index}>
                     <td>{indexOfFirstRow + index + 1}</td>
-                    <td>{item.material_Name}</td>
-                    <td>{item.quantity_used}</td>
-                    <td>{formatDate(item.date)}</td>
-                    <td>{item.purpose || 'N/A'}</td>
+                    <td>{item?.material_Name?.name || "N/A"}</td>
+                    <td>{item?.quantity_used  || "N/A"}</td>
+                    <td>{formatDate(item.date) || "N/A"}</td>
+                    <td>{item?.purpose || 'N/A'}</td>
                     <td>{item.user?.name || 'N/A'}</td>
                   </tr>
                 ))

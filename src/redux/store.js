@@ -2,7 +2,7 @@
 
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import authReducer from './authSlice';
-
+import materialReducer from './materilslice';
 import { persistReducer, persistStore } from 'redux-persist';
 // 👇 sessionStorage के लिए import
 import storageSession from 'redux-persist/lib/storage/session'; 
@@ -15,6 +15,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  material:materialReducer
 
 
 });

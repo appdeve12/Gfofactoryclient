@@ -73,7 +73,7 @@ const ViewAllAdmin = () => {
   }, [search, startDate, endDate, allAdmins]);
 
   const adduser = () => {
-    navigate('/register-user');
+    navigate('/dashboard/register-user');
   };
 
   // Pagination logic
@@ -98,36 +98,10 @@ const ViewAllAdmin = () => {
           />
 
           {/* Date Range Picker */}
-          <div className="d-flex align-items-center gap-2 mb-2">
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              placeholderText="Start Date"
-              className="form-control"
-              maxDate={new Date()}
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              placeholderText="End Date"
-              className="form-control"
-              maxDate={new Date()}
-            />
-          </div>
+     
 
           {/* Clear Filters Button */}
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => {
-              setSearch('');
-              setStartDate(null);
-              setEndDate(null);
-            }}
-            className="mb-2"
-          >
-            Clear Filters
-          </Button>
+
 
           {/* Add User */}
           <div className="d-flex align-items-center mb-2">

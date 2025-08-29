@@ -6,8 +6,10 @@ import CustomDropdown from "../../components/common/CustumDropdoen";
 import CustumButton from "../../components/common/CustumButton";
 import { registerAdmin } from "../../services/allService";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate=useNavigate()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,6 +37,9 @@ const SignUp = () => {
     const response = await registerAdmin(payload);
     if (response.status == 201) {
       toast.success("User Created Successfully")
+                   setTimeout(()=>{
+navigate("/dashboard/alladmin")
+      },2000)
     }
 
     setError("");
@@ -78,18 +83,7 @@ const SignUp = () => {
                   onChange={(e) => handleValueChange("email", e.target.value)}
                 />
               </Col>
-              <Col md={4}>
-                <Input
-                  label="Email"
-                  type="email"
-                  placeholder="Enter Email"
-                  value={formData.email}
-                  onChange={(e) => handleValueChange("email", e.target.value)}
-                />
-              </Col>
-            </Row>
-            <Row className="mb-3">
-              <Col md={4}>
+               <Col md={4}>
 
                 <Input
                   label="Password"
@@ -98,7 +92,9 @@ const SignUp = () => {
                   value={formData.password}
                   onChange={(e) => handleValueChange("password", e.target.value)}
                 />
-              </Col></Row>
+              </Col>
+            </Row>
+          
 
             <Button variant="primary" type="submit" onClick={handleSubmit}>
               Submit

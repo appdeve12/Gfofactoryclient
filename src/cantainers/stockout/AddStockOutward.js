@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomDropdown from '../../components/common/CustumDropdoen';
 import Input from '../../components/common/Input';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { addstockoutward } from '../../services/allService';
 import { useNavigate } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
 
 const AddStockOutward = () => {
     const navigate=useNavigate()
@@ -16,16 +16,16 @@ const AddStockOutward = () => {
     date: '',
   });
 
-  const material_Name_dropdown = [
-    { label: "MAP 90 Ammonium Phosphate", value: "MAP 90 Ammonium Phosphate" },
-    { label: "HDPE Plastic", value: "HDPE Plastic" },
-    { label: "Separation Tube", value: "Separation Tube" },
-    { label: "Sensor", value: "Sensor" },
-    { label: "Packing & Wrapping Box", value: "Packing & Wrapping Box" },
-    { label: "Stand", value: "Stand" },
-    { label: "Screw", value: "Screw" },
-    { label: "Wall Plack", value: "Wall Plack" }
-  ];
+
+    const materialdata=useSelector(state=>state.material.allmaterial);
+  const [materialdropdownm,setmatrialdropdown]=useState([])
+  useEffect(()=>{
+const material_Name_dropdown=materialdata.map((item,index)=>({
+  label:item.name,
+  value:item._id
+}))
+setmatrialdropdown(material_Name_dropdown)
+  },[materialdata])
 
   const handleValueChange = (field, value) => {
     setFormData(prev => ({
@@ -51,7 +51,10 @@ const AddStockOutward = () => {
           purpose: '',
           date: '',
         });
-        navigate("/stock-outward")
+                                     setTimeout(()=>{
+navigate("/dashboard/stock-outward")
+      },2000)
+     
       } else {
         toast.error("Failed to add stock outward.");
       }
@@ -62,7 +65,7 @@ const AddStockOutward = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 overflows">
       <Card>
         <Card.Header>
           <h4 className="mb-0">Add Stock Outward</h4>
@@ -73,7 +76,7 @@ const AddStockOutward = () => {
               <Col md={4}>
                 <Form.Label>Material Name</Form.Label>
                 <CustomDropdown
-                  RoleDropdownData={material_Name_dropdown}
+                  RoleDropdownData={materialdropdownm}
                   onChange={(e) => handleSelect(e.target.value)}
                   value={formData.material_Name}
                 />

@@ -19,6 +19,7 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const handleSubmit = async(e) => {
+    try{
     debugger;
     e.preventDefault();
     if (formData.email && formData.password) {
@@ -30,13 +31,15 @@ const Login = () => {
       dispatch(storeuserdata(response.data))
       toast.success("Login Successfully")
       setTimeout(()=>{
-navigate("/")
+navigate("/dashboard")
       },2000)
     }
     } else {
-      setError("");
+        toast.success("Invalid email or password")
       // Add login logic here
       console.log("Logging in with:", formData);
+    }}catch(error){
+          toast.error("Invalid email or password")
     }
   };
 
@@ -45,7 +48,7 @@ navigate("/")
   };
 
   return (
-    <Container fluid className="vh-100 d-flex justify-content-center align-items-center bg-light">
+    <Container fluid className="vh-100 d-flex justify-content-center align-items-center" style={{backgroundColor:"darkgray"}}>
       <Row>
         <Col>
           <Card style={{ minWidth: "350px", maxWidth: "400px" }} className="p-4 shadow-sm rounded">

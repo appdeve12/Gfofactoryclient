@@ -23,8 +23,8 @@ export const getallstockinwards=()=>{
 export const getparticulrstockinward=(id)=>{
 return axiosInstance.get(`${API_ROUTES.GET_PARTICULAR_STOCK_INWARD}/${id}`)
 }
-export const editparticulrstockinward=(id)=>{
-return axiosInstance.put(`${API_ROUTES.UPDATE_PARTICULR_STOCK_INWARD}/${id}`)
+export const editparticulrstockinward=(id,formData)=>{
+return axiosInstance.put(`${API_ROUTES.UPDATE_PARTICULR_STOCK_INWARD}/${id}`,formData)
 }
 export const deleteparticularstockinward=(id)=>{
 return axiosInstance.delete(`${API_ROUTES.DELETE_PARTICULAR_STOCK_INWARD}/${id}`)
@@ -38,4 +38,20 @@ export const getallstockoutwards=()=>{
 }
 export const dashboardstats=()=>{
   return axiosInstance.get(API_ROUTES.DASHBOARD_STATS)
+}
+
+export const addMaterialName=(data)=>{
+  return axiosInstance.post(API_ROUTES.ADD_MATERIALDATA,data)
+};
+export const getallMaterialName=()=>{
+  return axiosInstance.get(API_ROUTES.GET_ALL_MATERIALDATA)
+}
+export const getparticulrMaterialdata=(id)=>{
+return axiosInstance.get(`${API_ROUTES.GET_PARTICULAR_MATERIALDATA}/${id}`)
+}
+export const editParicularMaterialData=(id,formData)=>{
+return axiosInstance.put(`${API_ROUTES.UPDATE_PARTICULR_MATERIALDATA}/${id}`,formData)
+}
+export const deleteparticularMaterialData=(id)=>{
+return axiosInstance.delete(`${API_ROUTES.DELETE_PARTICULAR_MATERIALDATA}/${id}`)
 }

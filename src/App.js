@@ -12,34 +12,41 @@ import ViewAllAdmin from './cantainers/signup/ViewAllAdmin';
 import AddEditStockInward from './cantainers/StockIn/AddEditStockInward';
 import AddStockOutward from './cantainers/stockout/AddStockOutward';
 import Profile from './cantainers/profile/Profile';
-
+import EditStockInward from "./cantainers/StockIn/EditStockInward"
+import Addmaterial from './cantainers/addMaterials/Addmaterial';
+import AddEditMaterialName from './cantainers/addMaterials/AddEditMaterialName';
 function App() {
   return (
     <Router>
       <Routes>
         {/* Default "/" route redirect to "/login" */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
 
         {/* Login and Signup routes */}
 
-        <Route path="/register-user" element={<SignUp />} />
 
         {/* Protected routes inside Layout */}
-        <Route path="/" element={<Layout />}>
+        <Route path="/dashboard" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="alladmin" element={<ViewAllAdmin />} />
+          
+        <Route path="register-user" element={<SignUp />} />
           <Route path="profile" element={<Profile />} />
           <Route path="stock-inward" element={<StockInward />} />
+          
           <Route path="add-stock-inward" element={<AddEditStockInward />} />
-          <Route path="edit-stock-inward/:id" element={<AddEditStockInward />} />
+          <Route path="edit-stock-inward/:id" element={<EditStockInward />} />
           <Route path="stock-outward" element={<StockOutward />} />
           
           <Route path="add-stock-outward" element={<AddStockOutward />} />
+                    <Route path="add-material-name" element={<AddEditMaterialName />} />
+          <Route path="edit-material-name/:id" element={<AddEditMaterialName />} />
+          <Route path="materialdata" element={<Addmaterial />} />
         </Route>
       </Routes>
       <ToastContainer />
     </Router>
-    
+       
   );
 }
 

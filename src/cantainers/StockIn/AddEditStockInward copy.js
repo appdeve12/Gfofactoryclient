@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -8,20 +8,19 @@ import { addstockinward } from '../../services/allService';
 
 import CustomDropdown from '../../components/common/CustumDropdoen';
 import Input from '../../components/common/Input';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+
+const materialDropdownOptions = [
+  { label: "MAP 90 Ammonium Phosphate", value: "MAP 90 Ammonium Phosphate" },
+  { label: "HDPE Plastic", value: "HDPE Plastic" },
+  { label: "Separation Tube", value: "Separation Tube" },
+  { label: "Sensor", value: "Sensor" },
+  { label: "Packing & Wrapping Box", value: "Packing & Wrapping Box" },
+  { label: "Stand", value: "Stand" },
+  { label: "Screw", value: "Screw" },
+  { label: "Wall Plack", value: "Wall Plack" }
+];
 
 const AddEditStockInward = () => {
-      const navigate=useNavigate()
-  const materialdata=useSelector(state=>state.material.allmaterial);
-  const [materialdropdownm,setmatrialdropdown]=useState([])
-  useEffect(()=>{
-const materialDropdownOptions=materialdata.map((item,index)=>({
-  label:item.name,
-  value:item._id
-}))
-setmatrialdropdown(materialDropdownOptions)
-  },[materialdata])
   const [selectedMaterials, setSelectedMaterials] = useState([]);
   const [materialDetails, setMaterialDetails] = useState({});
 
@@ -112,14 +111,13 @@ const handleSubmit = async (e) => {
   for (let i = 0; i < entries.length; i++) {
     try {
       const response = await addstockinward(entries[i]); // One by one
-if(response.status==201){
-                         setTimeout(()=>{
-navigate("/dashboard/stock-inward")
-      },2000)}
+      if (response.status !== 201) {
+        allSuccessful = false;
+        toast.error(`Failed to submit entry for ${entries[i].material_Name}`);
+      }
     } catch (error) {
       allSuccessful = false;
-  const errorMessage = error?.response?.data?.message || `Error submitting ${entries[i].material_Name}`;
-  toast.error(errorMessage);
+      toast.error(`Error submitting ${entries[i].material_Name}`);
     }
   }
 
@@ -131,7 +129,7 @@ navigate("/dashboard/stock-inward")
 };
 
   return (
-    <div className="container mt-4 overflows"style={{}}>
+    <div className="container mt-4">
       <Card>
         <Card.Header>
           <h4>Add Multiple Stock Inward Entries</h4>
@@ -140,7 +138,7 @@ navigate("/dashboard/stock-inward")
           <Form onSubmit={handleSubmit}>
             <h5>Select Materials</h5>
             <Row className="mb-3">
-              {materialdropdownm.map(opt => (
+              {materialDropdownOptions.map(opt => (
                 <Col md={3} key={opt.value}>
                   <Form.Check
                     type="checkbox"

@@ -17,6 +17,12 @@ CREATE_STOCK_OUTWARD:"/api/stockoutward/create",
 GET_ALL_STOCK_OUTWARD:"/api/stockoutward/all",
 
 //DASHBOARD STATS
-DASHBOARD_STATS:"/api/stock/autostock"
+DASHBOARD_STATS:"/api/stock/autostock",
+//MATERIAL
 
+  ADD_MATERIALDATA:"/api/materialsname/create",
+  GET_ALL_MATERIALDATA:"/api/materialsname/all",
+  GET_PARTICULAR_MATERIALDATA:"/api/materialsname",
+  DELETE_PARTICULAR_MATERIALDATA:"/api/materialsname",
+  UPDATE_PARTICULR_MATERIALDATA:"/api/materialsname",
 };

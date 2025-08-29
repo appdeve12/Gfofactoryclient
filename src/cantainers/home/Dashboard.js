@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { dashboardstats } from '../../services/allService';
+import { dashboardstats, getallMaterialName } from '../../services/allService';
 import {
   Table,
   Container,
@@ -7,11 +7,14 @@ import {
   Card,
   Form,
 } from 'react-bootstrap';
-
+import { useDispatch } from 'react-redux';
+import { storeallmaterial } from '../../redux/materilslice';
 const Dashboard = () => {
+  const dispatch=useDispatch()
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);             // All data
   const [filteredData, setFilteredData] = useState([]); // Filtered data
+  console.log(filteredData)
 
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
@@ -22,7 +25,7 @@ const Dashboard = () => {
       const response = await dashboardstats();
       if (response.status === 200) {
         const formattedData = response.data.data.map((item) => ({
-          material_Name: item.material_Name,
+          material_Name: item.material_name,
           total_stock_in: item.total_stock_in,
           total_stock_out: item.total_stock_out,
           current_stock: item.current_stock,
@@ -39,7 +42,21 @@ const Dashboard = () => {
   useEffect(() => {
     fetchDashboardStats();
   }, []);
+  const fetchmaterialData = async () => {
+    try {
+      const response = await getallMaterialName();
+      if (response.status === 200) {
+        const data = response.data || [];
+dispatch(storeallmaterial(data))
+      }
+    } catch (error) {
+      console.error('Error fetching stock inward data:', error);
+    }
+  };
 
+  useEffect(() => {
+    fetchmaterialData();
+  }, []);
   // Filter by search
   useEffect(() => {
     const lowerSearch = search.toLowerCase();
