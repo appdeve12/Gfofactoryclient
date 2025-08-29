@@ -9,11 +9,15 @@ import {
 } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { storeallmaterial } from '../../redux/materilslice';
+import DashboardData from './DashboardData';
+import { ExportToExcel } from './ExportToExcel';
 const Dashboard = () => {
+  const fileName = "stockoutwad"; // here enter filename for your excel file
   const dispatch=useDispatch()
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);             // All data
   const [filteredData, setFilteredData] = useState([]); // Filtered data
+    const [exceldata, setexceldata] = useState([]);   
   console.log(filteredData)
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -30,6 +34,13 @@ const Dashboard = () => {
           total_stock_out: item.total_stock_out,
           current_stock: item.current_stock,
         }));
+         const customHeadings =response.data.data.map((item) => ({
+       "Material Name":item.material_name,
+       "Total Stock In": item.total_stock_in,
+           "Total Stock Out":  item.total_stock_out,
+             "Current Stock":  item.current_stock,
+     }))
+setexceldata(customHeadings)
         setData(formattedData);
         setFilteredData(formattedData);
       }
@@ -81,14 +92,22 @@ dispatch(storeallmaterial(data))
         </Card.Header>
 
         <Card.Body>
-          <Form.Control
+          <div className='d-flex' style={{justifyContent:"space-between"}}>    
+            <div>
+            <Form.Control
+          style={{width:"40vw"}}
             type="text"
             placeholder="Search material..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="mb-3"
           />
-
+          </div>
+          {/* <div>
+         <ExportToExcel apiData={exceldata} fileName={fileName} />
+         </div> */}
+         </div>
+      
           <Table responsive bordered hover>
             <thead className="table-dark">
               <tr>

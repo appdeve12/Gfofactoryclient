@@ -89,7 +89,7 @@ navigate("/dashboard/materialdata")
         <div className="container mt-4">
             <Card>
                 <Card.Header>
-                    <h4 className="mb-0">{id ? "Add Material Name" : "Edit Material Name"}</h4>
+                    <h4 className="mb-0">{id ? "Edit Material Name" : " Add Material Name"}</h4>
                 </Card.Header>
 
                 <Card.Body>

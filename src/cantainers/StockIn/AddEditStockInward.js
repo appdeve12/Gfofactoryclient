@@ -23,9 +23,11 @@ const materialDropdownOptions=materialdata.map((item,index)=>({
 setmatrialdropdown(materialDropdownOptions)
   },[materialdata])
   const [selectedMaterials, setSelectedMaterials] = useState([]);
+  console.log("selectedMaterials",selectedMaterials)
   const [materialDetails, setMaterialDetails] = useState({});
 
   const handleMaterialToggle = (value) => {
+    debugger;
     if (selectedMaterials.includes(value)) {
       // Remove material
       setSelectedMaterials(prev => prev.filter(item => item !== value));
@@ -39,7 +41,7 @@ setmatrialdropdown(materialDropdownOptions)
         ...prev,
         [value]: {
           purchase_quantity: '',
-          purchase_date: '',
+          purchase_date: new Date().toISOString().split("T")[0],
           supplier: '',
           remarks: '',
           file: []
@@ -98,6 +100,27 @@ setmatrialdropdown(materialDropdownOptions)
 
   const isImage = (type) => type.startsWith('image/');
   const isPDF = (type) => type === 'application/pdf';
+const handleRemoveFile = async (material, index) => {
+  const fileToDelete = materialDetails[material].file[index];
+  const filename = fileToDelete.url.split('/').pop(); // extract filename from URL
+
+  try {
+    await axios.delete(`${BASE_URL}/delete/${filename}`);
+    
+    // Remove file from state
+    setMaterialDetails(prev => ({
+      ...prev,
+      [material]: {
+        ...prev[material],
+        file: prev[material].file.filter((_, i) => i !== index)
+      }
+    }));
+
+    toast.success("File deleted successfully");
+  } catch (error) {
+    toast.error("Failed to delete file");
+  }
+};
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -138,8 +161,8 @@ navigate("/dashboard/stock-inward")
         </Card.Header>
         <Card.Body>
           <Form onSubmit={handleSubmit}>
-            <h5>Select Materials</h5>
-            <Row className="mb-3">
+            {/* <h5>Select Materials</h5> */}
+            {/* <Row className="mb-3">
               {materialdropdownm.map(opt => (
                 <Col md={3} key={opt.value}>
                   <Form.Check
@@ -148,16 +171,26 @@ navigate("/dashboard/stock-inward")
                     checked={selectedMaterials.includes(opt.value)}
                     onChange={() => handleMaterialToggle(opt.value)}
                   />
-                </Col>
+                </Col> 
               ))}
-            </Row>
+            </Row> */}
+                  <Row className="mb-3">
+                          <Col md={6}>
+                            <Form.Label>Select Material</Form.Label>
+                            <CustomDropdown
+                              RoleDropdownData={materialdropdownm}
+                              onChange={(e) => handleMaterialToggle(e.target.value)}
+                              value=""
+                            />
+                          </Col>
+                        </Row>
 
             <hr />
 
             {selectedMaterials.map(material => (
               <Card className="mb-4" key={material}>
                 <Card.Header className="d-flex justify-content-between">
-                  <strong>{material}</strong>
+                  <strong>{materialdropdownm.find((item,index)=>(item.value==material)).label}</strong>
                   <Button variant="danger" size="sm" onClick={() => handleRemoveMaterial(material)}>Remove</Button>
                 </Card.Header>
                 <Card.Body>
@@ -207,27 +240,37 @@ navigate("/dashboard/stock-inward")
                     </Col>
                   </Row>
 
-                  {materialDetails[material]?.file?.length > 0 && (
-                    <Row>
-                      {materialDetails[material].file.map((file, i) => (
-                        <Col md={3} key={i}>
-                          <Card className="p-2">
-                            {isImage(file.type) ? (
-                              <img
-                                src={`${BASE_URL}${file.url}`}
-                                alt="uploaded"
-                                style={{ width: '100%', height: 'auto' }}
-                              />
-                            ) : isPDF(file.type) ? (
-                              <a href={`${BASE_URL}${file.url}`} target="_blank" rel="noreferrer">📄 View PDF</a>
-                            ) : (
-                              <a href={`${BASE_URL}${file.url}`} target="_blank" rel="noreferrer">📁 Download</a>
-                            )}
-                          </Card>
-                        </Col>
-                      ))}
-                    </Row>
-                  )}
+               {materialDetails[material]?.file?.length > 0 && (
+  <Row>
+    {materialDetails[material].file.map((file, i) => (
+      <Col md={3} key={i}>
+        <Card className="p-2 position-relative">
+          {isImage(file.type) ? (
+            <img
+              src={`${BASE_URL}${file.url}`}
+              alt="uploaded"
+              style={{ width: '100%', height: 'auto' }}
+            />
+          ) : isPDF(file.type) ? (
+            <a href={`${BASE_URL}${file.url}`} target="_blank" rel="noreferrer">📄 View PDF</a>
+          ) : (
+            <a href={`${BASE_URL}${file.url}`} target="_blank" rel="noreferrer">📁 Download</a>
+          )}
+          {/* Delete button */}
+          <Button
+            variant="danger"
+            size="sm"
+            style={{ position: 'absolute', top: 5, right: 5 }}
+            onClick={() => handleRemoveFile(material, i)}
+          >
+            ✖
+          </Button>
+        </Card>
+      </Col>
+    ))}
+  </Row>
+)}
+
                 </Card.Body>
               </Card>
             ))}

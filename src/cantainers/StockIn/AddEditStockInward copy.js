@@ -24,28 +24,38 @@ const AddEditStockInward = () => {
   const [selectedMaterials, setSelectedMaterials] = useState([]);
   const [materialDetails, setMaterialDetails] = useState({});
 
-  const handleMaterialToggle = (value) => {
-    if (selectedMaterials.includes(value)) {
-      // Remove material
-      setSelectedMaterials(prev => prev.filter(item => item !== value));
-      const updatedDetails = { ...materialDetails };
-      delete updatedDetails[value];
-      setMaterialDetails(updatedDetails);
-    } else {
-      // Add material
-      setSelectedMaterials(prev => [...prev, value]);
-      setMaterialDetails(prev => ({
-        ...prev,
-        [value]: {
-          purchase_quantity: '',
-          purchase_date: '',
-          supplier: '',
-          remarks: '',
-          file: []
-        }
-      }));
-    }
+
+  const handleMaterialChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+
+    // Add new materials
+    selectedOptions.forEach(value => {
+      if (!selectedMaterials.includes(value)) {
+        setMaterialDetails(prev => ({
+          ...prev,
+          [value]: {
+            purchase_quantity: '',
+            purchase_date: '',
+            supplier: '',
+            remarks: '',
+            file: []
+          }
+        }));
+      }
+    });
+
+    // Remove deselected materials
+    selectedMaterials.forEach(value => {
+      if (!selectedOptions.includes(value)) {
+        const updatedDetails = { ...materialDetails };
+        delete updatedDetails[value];
+        setMaterialDetails(updatedDetails);
+      }
+    });
+
+    setSelectedMaterials(selectedOptions);
   };
+
 
   const handleInputChange = (material, field, value) => {
     setMaterialDetails(prev => ({
@@ -136,19 +146,22 @@ const handleSubmit = async (e) => {
         </Card.Header>
         <Card.Body>
           <Form onSubmit={handleSubmit}>
-            <h5>Select Materials</h5>
             <Row className="mb-3">
-              {materialDropdownOptions.map(opt => (
-                <Col md={3} key={opt.value}>
-                  <Form.Check
-                    type="checkbox"
-                    label={opt.label}
-                    checked={selectedMaterials.includes(opt.value)}
-                    onChange={() => handleMaterialToggle(opt.value)}
-                  />
-                </Col>
-              ))}
-            </Row>
+      <Col md={6}>
+        <Form.Label>Select Materials</Form.Label>
+        <Form.Select
+          multiple
+          value={selectedMaterials}
+          onChange={handleMaterialChange}
+        >
+          {materialDropdownOptions.map(opt => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </Form.Select>
+      </Col>
+    </Row>
 
             <hr />
 
@@ -162,6 +175,7 @@ const handleSubmit = async (e) => {
                   <Row className="mb-3">
                     <Col md={4}>
                       <Input
+                           required
                         label="Purchase Quantity"
                         type="number"
                         placeholder="Quantity"
@@ -171,6 +185,7 @@ const handleSubmit = async (e) => {
                     </Col>
                     <Col md={4}>
                       <Input
+                           required
                         label="Purchase Date"
                         type="date"
                         value={materialDetails[material]?.purchase_date || ''}
@@ -198,6 +213,7 @@ const handleSubmit = async (e) => {
                     </Col>
                     <Col md={6}>
                       <Input
+                           required
                         label="Upload File"
                         type="file"
                         onChange={(e) => handleFileUpload(material, e)}

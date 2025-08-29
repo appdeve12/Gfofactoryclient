@@ -1,5 +1,5 @@
 // Layout.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import '../../assets/css/layout.css';
 import { FaHome, FaArrowDown, FaArrowUp, FaFileAlt } from 'react-icons/fa';
@@ -84,10 +84,10 @@ const Sidebar = ({ collapsed }) => (
         <FaHome className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Home</span>}
       </Nav.Link>
-            {/* <Nav.Link as={Link} to="materialdata">
+            <Nav.Link as={Link} to="materialdata">
         <FaArrowDown className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Material Data</span>}
-      </Nav.Link> */}
+      </Nav.Link>
       <Nav.Link as={Link} to="stock-inward">
         <FaArrowDown className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Stock Inward</span>}
@@ -119,5 +119,6 @@ const Layout = () => {
     </div>
   );
 };
+
 
 export default Layout;

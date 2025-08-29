@@ -16,13 +16,29 @@ const Login = () => {
     password: "",
   });
 
-  const [error, setError] = useState("");
-
+  const [errors, setErrors] = useState({});
+const validateFunction=()=>{
+  const newError={};
+  if(!formData.email.trim()){
+    newError.email="Email is required"
+  }
+    if(!formData.password.trim()){
+    newError.password="Password is required"
+  }
+      if(!formData.email.includes('@')){
+    newError.email="Email is Invalid"
+  }
+  if (formData.password.length < 6) newError.password = "Password must be at least 6 characters";
+  return newError;
+}
   const handleSubmit = async(e) => {
     try{
     debugger;
     e.preventDefault();
-    if (formData.email && formData.password) {
+        const validationErrors = validateFunction();
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length === 0) {
+      console.log("Form Submitted Successfully:", formData);
     const response=await loginUser(formData)
     if(response.status==200){
       console.log(response.data)
@@ -54,7 +70,7 @@ navigate("/dashboard")
           <Card style={{ minWidth: "350px", maxWidth: "400px" }} className="p-4 shadow-sm rounded">
             <Card.Body>
               <h3 className="text-center mb-4">Login</h3>
-              {error && <Alert variant="danger">{error}</Alert>}
+             
               <Form >
                 <Input
                   label="Email"
@@ -63,6 +79,7 @@ navigate("/dashboard")
                   value={formData.email}
                   onChange={(e) => handleValueChange("email", e.target.value)}
                 />
+                    {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>}
                 <Input
                   label="Password"
                   type="password"
@@ -70,6 +87,7 @@ navigate("/dashboard")
                   value={formData.password}
                   onChange={(e) => handleValueChange("password", e.target.value)}
                 />
+                    {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
                 <CustumButton type="submit" name="Login" onClick={handleSubmit}/>
               </Form>
               {/* <div className="mt-3 text-center">

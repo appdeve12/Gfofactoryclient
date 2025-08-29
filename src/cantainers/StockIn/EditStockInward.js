@@ -194,37 +194,63 @@ navigate("/dashboard/stock-inward")
             </Row>
 
             {/* File Preview Section */}
-            {formData.file.length > 0 && (
-              <>
-                <h5 className="mt-4 mb-2">Uploaded Files Preview:</h5>
-                <Row className="mb-3">
-                  {formData.file.map((item, idx) => (
-                    <Col md={3} key={idx} className="mb-3">
-                      <Card className="p-2">
-                        {isImage(item.type) ? (
-                          <img
-                            src={`${BASE_URL}${item.url}`}
-                            alt={`uploaded-${idx}`}
-                            style={{ width: '100%', height: 'auto', borderRadius: 4 }}
-                          />
-                        ) : isPDF(item.type) ? (
-                          <a href={`${BASE_URL}${item.url}`} target="_blank" rel="noopener noreferrer">
-                            📄 View PDF
-                          </a>
-                        ) : (
-                          <a href={`${BASE_URL}${item.url}`} target="_blank" rel="noopener noreferrer">
-                            📁 Download File
-                          </a>
-                        )}
-                        <p className="mt-2 mb-0" style={{ fontSize: '0.75rem', wordBreak: 'break-word' }}>
-                          {item.type}
-                        </p>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              </>
+          {/* File Preview Section */}
+{formData.file.length > 0 && (
+  <>
+    <h5 className="mt-4 mb-2">Uploaded Files Preview:</h5>
+    <Row className="mb-3">
+      {formData.file.map((item, idx) => (
+        <Col md={3} key={idx} className="mb-3">
+          <Card className="p-2 position-relative">
+            {isImage(item.type) ? (
+              <img
+                src={`${BASE_URL}${item.url}`}
+                alt={`uploaded-${idx}`}
+                style={{ width: '100%', height: 'auto', borderRadius: 4 }}
+              />
+            ) : isPDF(item.type) ? (
+              <a href={`${BASE_URL}${item.url}`} target="_blank" rel="noopener noreferrer">
+                📄 View PDF
+              </a>
+            ) : (
+              <a href={`${BASE_URL}${item.url}`} target="_blank" rel="noopener noreferrer">
+                📁 Download File
+              </a>
             )}
+
+            {/* Delete Button */}
+            <Button
+              variant="danger"
+              size="sm"
+              style={{ position: 'absolute', top: 5, right: 5 }}
+              onClick={async () => {
+                const filename = item.url.split('/').pop(); // get filename
+                try {
+                  await axios.delete(`${BASE_URL}/delete/${filename}`);
+                  // remove file from state
+                  setFormData(prev => ({
+                    ...prev,
+                    file: prev.file.filter((_, i) => i !== idx)
+                  }));
+                  toast.success('File deleted successfully');
+                } catch (err) {
+                  toast.error('Failed to delete file');
+                }
+              }}
+            >
+              ✖
+            </Button>
+
+            <p className="mt-2 mb-0" style={{ fontSize: '0.75rem', wordBreak: 'break-word' }}>
+              {item.type}
+            </p>
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  </>
+)}
+
 
             <div className="text-end mt-4">
               <Button variant="primary" type="submit">

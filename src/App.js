@@ -15,6 +15,7 @@ import Profile from './cantainers/profile/Profile';
 import EditStockInward from "./cantainers/StockIn/EditStockInward"
 import Addmaterial from './cantainers/addMaterials/Addmaterial';
 import AddEditMaterialName from './cantainers/addMaterials/AddEditMaterialName';
+import "./App.css"
 function App() {
   return (
     <Router>
