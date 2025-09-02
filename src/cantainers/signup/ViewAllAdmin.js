@@ -1,23 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Table,
-  Container,
-  Spinner,
-  Alert,
-  Button,
-  Card,
-  Form,
-  Pagination,
-} from 'react-bootstrap';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { viewalladmindata } from '../../services/allService';
+import { Table, Container, Spinner, Alert, Button, Card, Form, Pagination } from 'react-bootstrap';
+import { blockedunblocked, resetpasswordadmin, viewalladmindata } from '../../services/allService';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import ResetPassword from './ResetPassword';
 
 const ViewAllAdmin = () => {
   const navigate = useNavigate();
-
+const [confirmModal,setConfirmModal]=useState(false)
   const [allAdmins, setAllAdmins] = useState([]);
+  const [resetpasswordmodal, setresetpasswordmodal] = useState(false);
+  const [adminID, setadminId] = useState("");
   const [filterData, setFilterData] = useState([]);
   const [search, setSearch] = useState('');
   const [startDate, setStartDate] = useState(null);
@@ -32,16 +25,18 @@ const ViewAllAdmin = () => {
   const fetchAllAdminUsers = async () => {
     try {
       const response = await viewalladmindata();
-      if (response.status === 200) {
-        const filteredAdmins = response.data.fetchalladmindata.map((admin) => ({
+      if (response) {
+        const filteredAdmins = response.data.admins.map((admin) => ({
           _id: admin._id,
           name: admin.name,
           email: admin.email,
           role: admin.role,
           created_At: admin.created_At,
+          isBlocked: admin.isBlocked
         }));
         setAllAdmins(filteredAdmins);
         setFilterData(filteredAdmins);
+        setSearch("")
       } else {
         setError('Failed to fetch admin data.');
       }
@@ -76,12 +71,58 @@ const ViewAllAdmin = () => {
     navigate('/dashboard/register-user');
   };
 
+  const handleadmintoggle = async (adminId, text) => {
+    try {
+      const payload = {
+        action: text
+      };
+      const response = await blockedunblocked(adminId, payload);
+      if (response.status === 200) {
+        toast.success(`Account ${text === "block" ? "Blocked" : "Unblocked"} Successfully`);
+        fetchAllAdminUsers();
+      }
+    } catch (error) {
+      toast.error('Error toggling admin status');
+    }
+  };
+
   // Pagination logic
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filterData.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(filterData.length / rowsPerPage);
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  const handleresetmodal = (adminId) => {
+        setSearch("")
+    setresetpasswordmodal(true);
+    setadminId(adminId);
+      
+  };
+
+  const handleconfirm = async (data) => {
+        setSearch("")
+    try {
+      const response = await resetpasswordadmin(data);
+      if (response.status === 200) {
+        toast.success("Password Reset Successfully");
+        setresetpasswordmodal(false);
+        setSearch("")
+        fetchAllAdminUsers();
+      }
+    } catch (error) {
+      toast.error('Error resetting password');
+    }
+  };
+
+  const handleClose = () => {setresetpasswordmodal(false)  
+    setSearch("")};
+  const handleConfirmClose = () => {
+    setConfirmModal(false)
+  };
+  const handleConfirmopen=()=>{
+        setConfirmModal(true)
+  }
 
   return (
     <Container className="mt-4">
@@ -95,15 +136,10 @@ const ViewAllAdmin = () => {
             onChange={(e) => setSearch(e.target.value)}
             className="mb-2"
             style={{ maxWidth: '200px' }}
+            autocomplete="off"
           />
 
-          {/* Date Range Picker */}
-     
-
-          {/* Clear Filters Button */}
-
-
-          {/* Add User */}
+          {/* Add User Button */}
           <div className="d-flex align-items-center mb-2">
             <h4 className="mb-0 me-3">All Users</h4>
             <Button variant="outline-primary" size="sm" onClick={adduser}>
@@ -130,6 +166,7 @@ const ViewAllAdmin = () => {
                     <th>Email</th>
                     <th>Role</th>
                     <th>Created At</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -139,6 +176,22 @@ const ViewAllAdmin = () => {
                       <td>{admin.email}</td>
                       <td>{admin.role}</td>
                       <td>{new Date(admin.created_At).toLocaleString()}</td>
+                      <td>
+                        <div className='d-flex' style={{gap:"8px"}}>
+                        {admin.isBlocked === false ? (
+                          <Button variant="outline-primary" size="sm" onClick={() => handleadmintoggle(admin._id, "block")}>
+                            Block
+                          </Button>
+                        ) : (
+                          <Button variant="outline-primary" size="sm" onClick={() => handleadmintoggle(admin._id, "unblock")}>
+                            Unblock
+                          </Button>
+                        )}
+                        <Button variant="outline-primary" size="sm" onClick={() => handleresetmodal(admin._id)}>
+                          Reset Password
+                        </Button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -161,14 +214,18 @@ const ViewAllAdmin = () => {
             </>
           )}
 
-          {!loading && filterData.length === 0 && (
-            <Alert variant="info">No admin users found.</Alert>
-          )}
+          {filterData.length === 0 && !loading && <Alert variant="info">No admin users found.</Alert>}
         </Card.Body>
       </Card>
+
+      <ResetPassword
+        resetpasswordmodal={resetpasswordmodal}
+        handleClose={handleClose}
+        handleconfirm={handleconfirm}
+        adminID={adminID}
+      />
     </Container>
   );
 };
 
 export default ViewAllAdmin;
-  

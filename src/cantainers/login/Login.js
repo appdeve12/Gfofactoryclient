@@ -55,7 +55,8 @@ navigate("/dashboard")
       // Add login logic here
       console.log("Logging in with:", formData);
     }}catch(error){
-          toast.error("Invalid email or password")
+      console.log(error.response.data.message)
+          toast.error(`${error.response.data.message}`)
     }
   };
 

@@ -11,8 +11,12 @@ export const registerAdmin = (data) => {
 export const viewalladmindata = () => {
   return axiosInstance.get(API_ROUTES.VIEW_ALL_ADMINS);
 };
-
-
+export const blockedunblocked=(id,data)=>{
+return axiosInstance.post(`${API_ROUTES.BLOCKED_UNBLOCKED_ADMIN}/${id}`,data)
+}
+export const resetpasswordadmin=(data)=>{
+  return axiosInstance.post(API_ROUTES.RESET_PASSWORD,data)
+}
 
 export const addstockinward=(data)=>{
   return axiosInstance.post(API_ROUTES.ADD_STOCK_INWARD,data)
@@ -39,6 +43,9 @@ export const getallstockoutwards=()=>{
 export const dashboardstats=()=>{
   return axiosInstance.get(API_ROUTES.DASHBOARD_STATS)
 }
+export const updateLimit=(id,data)=>{
+  return axiosInstance.patch(`${API_ROUTES.UPDATE_MATERIAL_LIMIT}${id}/limit`,data)
+}
 
 export const addMaterialName=(data)=>{
   return axiosInstance.post(API_ROUTES.ADD_MATERIALDATA,data)
@@ -54,4 +61,7 @@ return axiosInstance.put(`${API_ROUTES.UPDATE_PARTICULR_MATERIALDATA}/${id}`,for
 }
 export const deleteparticularMaterialData=(id)=>{
 return axiosInstance.delete(`${API_ROUTES.DELETE_PARTICULAR_MATERIALDATA}/${id}`)
+}
+export const updateAdminPermissions=(data)=>{
+  return axiosInstance.put(API_ROUTES.MANAGE_PERMISISON,data)
 }

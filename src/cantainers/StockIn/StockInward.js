@@ -21,6 +21,7 @@ const StockInward = () => {
   const userRole = userDt?.user?.role;
 
   const [stockInwardData, setStockInwardData] = useState([]);
+  const [selectedmaterial, setselectedmaterial] = useState("")
   const [filterData, setFilterData] = useState([]);
   const [search, setSearch] = useState('');
   const [startDate, setStartDate] = useState(null);
@@ -53,17 +54,19 @@ const StockInward = () => {
   // Filter by search + date
   useEffect(() => {
     const searchLower = search.toLowerCase();
+    const seletedmaterialtype = selectedmaterial.toLowerCase();
     const filtered = stockInwardData.filter(item => {
       const nameMatch = item?.material_Name?.name.toLowerCase().includes(searchLower);
+      const typeMatch = item?.material_Name?.type.toLowerCase().includes(seletedmaterialtype);
       const date = new Date(item.created_At);
       const dateMatch =
         (!startDate || date >= startDate) && (!endDate || date <= endDate);
-      return nameMatch && dateMatch;
+      return nameMatch && dateMatch && typeMatch;
     });
 
     setFilterData(filtered);
     setCurrentPage(1);
-  }, [search, startDate, endDate, stockInwardData]);
+  }, [search, startDate, endDate, stockInwardData, selectedmaterial]);
 
   // Pagination logic
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -110,6 +113,11 @@ const StockInward = () => {
       handleCloseModal();
     }
   };
+  const handedropchnage = (e) => {
+    const selected = e.target.value;
+    console.log("selected", selected);
+    setselectedmaterial(selected)
+  }
 
   return (
     <Container className="mt-4">
@@ -124,6 +132,7 @@ const StockInward = () => {
         <Card.Body>
           {/* Search and Filter Controls */}
           <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
+
             <Form.Control
               type="text"
               placeholder="Search material..."
@@ -131,7 +140,12 @@ const StockInward = () => {
               onChange={(e) => setSearch(e.target.value)}
               style={{ maxWidth: '200px' }}
             />
+            {/* <Form.Select aria-label="Default select example " onChange={(e) => handedropchnage(e)} style={{ maxWidth: '300px' }} >
+              <option>Select The Type</option>
+              <option value="raw material">Raw Material</option>
+              <option value="ready material">Ready Material</option>
 
+            </Form.Select> */}
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
@@ -139,6 +153,7 @@ const StockInward = () => {
               className="form-control"
               maxDate={new Date()}
             />
+            
             <DatePicker
               selected={endDate}
               onChange={(date) => setEndDate(date)}
@@ -183,9 +198,9 @@ const StockInward = () => {
                 currentRows.map((item, index) => (
                   <tr key={index}>
                     <td>{indexOfFirstRow + index + 1}</td>
-                    <td>{item?.material_Name?.name|| ""}</td>
+                    <td>{item?.material_Name?.name || ""}</td>
                     <td>{item?.purchase_quantity || 'N/A'}</td>
-                    <td>{formatDate(item?.purchase_date)|| 'N/A'}</td>
+                    <td>{formatDate(item?.purchase_date) || 'N/A'}</td>
                     <td>{item?.supplier || 'N/A'}</td>
                     <td>{item?.remarks || 'N/A'}</td>
                     <td>{item.user?.name || 'N/A'}</td>

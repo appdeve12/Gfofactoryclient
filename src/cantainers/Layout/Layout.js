@@ -1,5 +1,5 @@
 // Layout.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import '../../assets/css/layout.css';
 import { FaHome, FaArrowDown, FaArrowUp, FaFileAlt } from 'react-icons/fa';
@@ -8,11 +8,15 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaRegUserCircle } from "react-icons/fa";
 import { toast } from 'react-toastify';
-const Header = ({ toggleSidebar,userData }) => {
-  console.log("userData",userData)
+import { ImProfile } from "react-icons/im";
+import { FaUserFriends } from "react-icons/fa";
+import { FaUserCheck } from "react-icons/fa6";
+import { RiLogoutCircleLine } from "react-icons/ri";
+const Header = ({ toggleSidebar, userData }) => {
+  console.log("userData", userData)
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
-
+  const dropdownRef = useRef(null)
   const handleToggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
@@ -22,20 +26,39 @@ const Header = ({ toggleSidebar,userData }) => {
     console.log("Logout clicked");
     localStorage.removeItem('token');
     toast.success("Logout Successfully");
-    setTimeout(()=>{
- navigate("/");
-    },2000)
-   
+    setTimeout(() => {   
+      navigate("/");
+    }, 2000)
+
   };
 
   const handleProfile = () => {
     navigate("/dashboard/profile");
   };
-  const handleMultipleUser=()=>{
-        navigate("/dashboard/alladmin");
+  const handleMultipleUser = () => {
+    navigate("/dashboard/alladmin");
   }
-  return(
-<Navbar bg="dark" variant="dark" className="header justify-content-between px-3 position-relative">
+  const handlePermissionManage = () => {
+    navigate("/dashboard/permission");
+  }
+
+  const handleClickOutside = (event) => {
+    // Agar click dropdown ke bahar hai to dropdown close karo
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowDropdown(false);
+    }
+  };
+
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    // Clean up jab component unmount ho
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [])
+  return (
+    <Navbar bg="dark" variant="dark" className="header justify-content-between px-3 position-relative">
       <div className="d-flex align-items-center">
         <Button variant="outline-light" onClick={toggleSidebar} className="me-3">
           ☰
@@ -45,7 +68,7 @@ const Header = ({ toggleSidebar,userData }) => {
 
       <div className="d-flex align-items-center gap-2 text-light position-relative">
         <span>{userData?.user?.name}</span>
-        <div className="position-relative">
+        <div className="position-relative" ref={dropdownRef}>
           <FaRegUserCircle
             size={24}
             style={{ cursor: "pointer" }}
@@ -63,9 +86,10 @@ const Header = ({ toggleSidebar,userData }) => {
               borderRadius: '5px',
               boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
             }}>
-           {userData?.user?.role =="supervisior" &&  <button className="dropdown-item" onClick={handleMultipleUser}>👤 Add Multiple User</button>}   
-              <button className="dropdown-item" onClick={handleProfile}>👤 View Profile</button>
-              <button className="dropdown-item" onClick={handleLogout}>🔓 Logout</button>
+              {userData?.user?.role == "supervisior" && <button className="dropdown-item" onClick={handleMultipleUser}><FaUserFriends /> Add Multiple User</button>}
+              <button className="dropdown-item" onClick={handleProfile}><ImProfile /> View Profile</button>
+              <button className="dropdown-item" onClick={handlePermissionManage}><FaUserCheck /> Manage Permission</button>
+              <button className="dropdown-item" onClick={handleLogout}><RiLogoutCircleLine /> Logout</button>
             </div>
           )}
         </div>
@@ -84,7 +108,7 @@ const Sidebar = ({ collapsed }) => (
         <FaHome className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Home</span>}
       </Nav.Link>
-            <Nav.Link as={Link} to="materialdata">
+      <Nav.Link as={Link} to="materialdata">
         <FaArrowDown className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Material Data</span>}
       </Nav.Link>
@@ -96,24 +120,24 @@ const Sidebar = ({ collapsed }) => (
         <FaArrowUp className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Stock Outward</span>}
       </Nav.Link>
-   
+
     </Nav>
-  </div>  
+  </div>
 );
 
 const Layout = () => {
-  const userDt=useSelector(state=>state.auth.userdata)
+  const userDt = useSelector(state => state.auth.userdata)
   const [collapsed, setCollapsed] = useState(false);
 
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   return (
     <div className="layout">
-      <Header toggleSidebar={toggleSidebar} userData={userDt}/>
+      <Header toggleSidebar={toggleSidebar} userData={userDt} />
       <div className="main">
         <Sidebar collapsed={collapsed} />
-        <div className=""style={{display:"contents"}}>
-       <Outlet />
+        <div className="overflows" style={{ display: "contents" }}>
+          <Outlet />
         </div>
       </div>
     </div>

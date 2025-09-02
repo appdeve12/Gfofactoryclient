@@ -16,6 +16,8 @@ import EditStockInward from "./cantainers/StockIn/EditStockInward"
 import Addmaterial from './cantainers/addMaterials/Addmaterial';
 import AddEditMaterialName from './cantainers/addMaterials/AddEditMaterialName';
 import "./App.css"
+import Permissions from './cantainers/permissions/Permissions';
+import ProtectedRoute from './cantainers/ProtectedRoute';
 function App() {
   return (
     <Router>
@@ -27,7 +29,11 @@ function App() {
 
 
         {/* Protected routes inside Layout */}
-        <Route path="/dashboard" element={<Layout />}>
+        <Route path="/dashboard"  element={
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    }>
           <Route index element={<Dashboard />} />
           <Route path="alladmin" element={<ViewAllAdmin />} />
           
@@ -43,6 +49,7 @@ function App() {
                     <Route path="add-material-name" element={<AddEditMaterialName />} />
           <Route path="edit-material-name/:id" element={<AddEditMaterialName />} />
           <Route path="materialdata" element={<Addmaterial />} />
+               <Route path="permission" element={<Permissions   />} />
         </Route>
       </Routes>
       <ToastContainer />
@@ -52,3 +59,4 @@ function App() {
 }
 
 export default App;
+  

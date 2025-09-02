@@ -11,12 +11,14 @@ import {
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { BASE_URL } from '../../services/apiRoutes';
 
 const StockOutward = () => {
   const navigate = useNavigate();
   const [stockoutsData, setStockoutsData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
+    const [selectedmaterial,setselectedmaterial]=useState("")
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,23 +57,30 @@ const StockOutward = () => {
     const lowercased = search.toLowerCase();
 
     const filtered = stockoutsData.filter((item) => {
+          const seletedmaterialtype=selectedmaterial.toLowerCase();
       const nameMatch = item?.material_Name?.name.toLowerCase().includes(lowercased);
+              const typeMatch = item?.material_Name?.type.toLowerCase().includes(seletedmaterialtype);
       const date = new Date(item.date);
       const dateMatch =
         (!startDate || date >= startDate) && (!endDate || date <= endDate);
 
-      return nameMatch && dateMatch;
+      return nameMatch && dateMatch && typeMatch;
     });
-
+   
     setFilteredData(filtered);
     setCurrentPage(1);
-  }, [search, startDate, endDate, stockoutsData]);
+  }, [search, startDate, endDate, stockoutsData,selectedmaterial]);
 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleAddStockOutward = () => {
     navigate('/dashboard/add-stock-outward');
   };
+  const handedropchnage=(e)=>{
+    const selected=e.target.value;
+    console.log("selected",selected);
+setselectedmaterial(selected)
+}
 
   return (
     <Container className="mt-4">
@@ -93,6 +102,12 @@ const StockOutward = () => {
               onChange={(e) => setSearch(e.target.value)}
               style={{ maxWidth: '200px' }}
             />
+                  {/* <Form.Select aria-label="Default select example "       style={{ maxWidth: '300px' }} onChange={(e)=>handedropchnage(e)} >
+                  <option>Select The Type</option>
+                  <option value="raw material">Raw Material</option>
+                  <option value="ready material">Ready Material</option>
+                
+                </Form.Select> */}
 
             <DatePicker
               selected={startDate}
@@ -132,6 +147,7 @@ const StockOutward = () => {
                 <th>Quantity Used</th>
                 <th>Date</th>
                 <th>Purpose</th>
+                  <th>Invoice</th>
                 <th>User</th>
               </tr>
             </thead>
@@ -150,6 +166,27 @@ const StockOutward = () => {
                     <td>{item?.quantity_used  || "N/A"}</td>
                     <td>{formatDate(item.date) || "N/A"}</td>
                     <td>{item?.purpose || 'N/A'}</td>
+                   <td>
+  {item?.file?.type?.startsWith('image/') ? (
+    // Show small clickable image preview
+    <a href={`${BASE_URL}${item.file.url}`}  target="_blank" rel="noreferrer">
+      <img 
+        src={`${BASE_URL}${item.file.url}`} 
+        alt="preview" 
+        style={{ width: '50px', height: 'auto', cursor: 'pointer' }} 
+      />
+    </a>
+  ) : item?.file?.type === 'application/pdf' ? (
+    // Show clickable PDF link
+    <a href={`${BASE_URL}${item.file.url}`}  target="_blank" rel="noreferrer">
+      📄 View PDF
+    </a>
+  ) : (
+    // If no file or unknown type
+    'N/A'
+  )}
+</td>
+
                     <td>{item.user?.name || 'N/A'}</td>
                   </tr>
                 ))

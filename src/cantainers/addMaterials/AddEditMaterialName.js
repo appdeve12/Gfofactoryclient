@@ -14,8 +14,10 @@ const AddEditMaterialName = () => {
     console.log(id)
     const [formData, setFormData] = useState({
         name: "",
-        description: ""
+        description: "",
+        type:""
     });
+    console.log("formData",formData)
 
     const handleValueChange = (field, value) => {
         setFormData(prev => ({
@@ -38,6 +40,7 @@ const AddEditMaterialName = () => {
                 setFormData({
                     name: data.name || '',
                     description: data.description || '',
+                    type:data.type || ""
                
                 });
             }
@@ -80,6 +83,14 @@ navigate("/dashboard/materialdata")
         toast.error("Operation failed");
     }
 };
+const handedropchnage=(e)=>{
+    const selected=e.target.value;
+    console.log("selected",selected);
+  setFormData(prev => ({
+            ...prev,
+            "type": selected
+        }));
+}
 
 
 
@@ -116,6 +127,17 @@ navigate("/dashboard/materialdata")
                                     value={formData.description}
                                     onChange={(e) => handleValueChange("description", e.target.value)}
                                 />
+                            </Col>
+                             <Col md={4} >
+                                 <Form.Group className="mb-4 position-relative">
+                                   <Form.Label>Type</Form.Label>
+                                <Form.Select aria-label="Default select example " onChange={(e)=>handedropchnage(e)} value={formData.type || ""}>
+      <option>Select The Type</option>
+      <option value="raw material">Raw Material</option>
+      <option value="ready material">Ready Material</option>
+    
+    </Form.Select>
+    </Form.Group>
                             </Col>
 
 

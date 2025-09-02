@@ -1,133 +1,4 @@
-// import React, { useEffect, useState } from 'react';
-// import CustomDropdown from '../../components/common/CustumDropdoen';
-// import Input from '../../components/common/Input';
-// import { Button, Form, Card, Row, Col } from 'react-bootstrap';
-// import { toast } from 'react-toastify';
-// import { addstockoutward } from '../../services/allService';
-// import { useNavigate } from 'react-router-dom';
-// import { useSelector } from 'react-redux';
 
-// const AddStockOutward = () => {
-//     const navigate=useNavigate()
-//   const [formData, setFormData] = useState({
-//     material_Name: '',
-//     quantity_used: '',
-//     purpose: '',
-//     date: '',
-//   });
-
-
-//     const materialdata=useSelector(state=>state.material.allmaterial);
-//   const [materialdropdownm,setmatrialdropdown]=useState([])
-//   useEffect(()=>{
-// const material_Name_dropdown=materialdata.map((item,index)=>({
-//   label:item.name,
-//   value:item._id
-// }))
-// setmatrialdropdown(material_Name_dropdown)
-//   },[materialdata])
-
-//   const handleValueChange = (field, value) => {
-//     setFormData(prev => ({
-//       ...prev,
-//       [field]: value
-//     }));
-//   };
-
-//   const handleSelect = (value) => {
-//     handleValueChange('material_Name', value);
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//       const response = await addstockoutward(formData);
-//       if (response.status === 201) {
-//         toast.success("Stock Outward added successfully!");
-   
-//         setFormData({
-//           material_Name: '',
-//           quantity_used: '',
-//           purpose: '',
-//           date: '',
-//         });
-//                                      setTimeout(()=>{
-// navigate("/dashboard/stock-outward")
-//       },2000)
-     
-//       } else {
-//         toast.error("Failed to add stock outward.");
-//       }
-//     } catch (error) {
-//       console.error("Error submitting form:", error);
-//       toast.error("Something went wrong.");
-//     }
-//   };
-
-//   return (
-//     <div className="container mt-4 overflows">
-//       <Card>
-//         <Card.Header>
-//           <h4 className="mb-0">Add Stock Outward</h4>
-//         </Card.Header>
-//         <Card.Body>
-//           <Form onSubmit={handleSubmit}>
-//             <Row className="mb-3">
-//               <Col md={4}>
-//                 <Form.Label>Material Name</Form.Label>
-//                 <CustomDropdown
-//                   RoleDropdownData={materialdropdownm}
-//                   onChange={(e) => handleSelect(e.target.value)}
-//                   value={formData.material_Name}
-//                 />
-//               </Col>
-
-//               <Col md={4}>
-//                 <Input
-//                   label="Quantity Used"
-//                   type="number"
-//                   placeholder="Enter Quantity Used"
-//                   value={formData.quantity_used}
-//                   onChange={(e) => handleValueChange("quantity_used", e.target.value)}
-//                 />
-//               </Col>
-
-//               <Col md={4}>
-//                 <Input
-//                   label="Date"
-//                   type="date"
-//                   placeholder="Select Date"
-//                   value={formData.date}
-//                   onChange={(e) => handleValueChange("date", e.target.value)}
-//                 />
-//               </Col>
-//             </Row>
-
-//             <Row className="mb-3">
-//               <Col md={4}>
-//                 <Input
-//                   label="Purpose"
-//                   type="text"
-//                   placeholder="Enter Purpose"
-//                   value={formData.purpose}
-//                   onChange={(e) => handleValueChange("purpose", e.target.value)}
-//                 />
-//               </Col>
-//             </Row>
-
-//             <div className="text-end mt-4">
-//               <Button variant="primary" type="submit">
-//                 Submit
-//               </Button>
-//             </div>
-//           </Form>
-//         </Card.Body>
-//       </Card>
-//     </div>
-//   );
-// };
-
-// export default AddStockOutward;
 import React, { useEffect, useState } from 'react';
 import CustomDropdown from '../../components/common/CustumDropdoen';
 import Input from '../../components/common/Input';
@@ -136,7 +7,8 @@ import { toast } from 'react-toastify';
 import { addstockoutward } from '../../services/allService';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
+import axios from 'axios';
+import { BASE_URL } from '../../services/apiRoutes';
 const AddStockOutward = () => {
   const navigate = useNavigate();
 
@@ -145,7 +17,7 @@ const AddStockOutward = () => {
     materials: [], // [{ material_Id: '', quantity_used: '', date: '' }]
     purpose: '',
   });
-
+  console.log("formData", formData)
   // Redux material data
   const materialdata = useSelector(state => state.material.allmaterial);
   const [materialDropdown, setMaterialDropdown] = useState([]);
@@ -169,6 +41,7 @@ const AddStockOutward = () => {
           {
             material_Id: materialId,
             quantity_used: '',
+            file: {},
             date: new Date().toISOString().split("T")[0], // today
           }
         ]
@@ -196,46 +69,81 @@ const AddStockOutward = () => {
   };
 
   // Submit form
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (formData.materials.length === 0) {
-    toast.error("Please select at least one material.");
-    return;
-  }
-
-  try {
-    for (let mat of formData.materials) {
-      if (!mat.quantity_used) {
-        toast.error("Please enter quantity used for all selected materials.");
-        return;
-      }
-
-      // Transform payload to match backend schema
-      const payload = {
-        material_Name: mat.material_Id, // rename to match schema
-        quantity_used: Number(mat.quantity_used), // convert to number
-        date: mat.date,
-        purpose: formData.purpose,
-      };
-
-      const response = await addstockoutward(payload);
-      if (response.status === 201) {
-        toast.success(`Stock Outward for ${mat.material_Id} added successfully!`);
-      } else {
-        toast.error(`Failed to add stock outward for ${mat.material_Id}.`);
-      }
+    if (formData.materials.length === 0) {
+      toast.error("Please select at least one material.");
+      return;
     }
 
-    // Reset form after all materials processed
-    setFormData({ materials: [], purpose: '' });
-    setTimeout(() => navigate("/dashboard/stock-outward"), 2000);
+    try {
+      for (let mat of formData.materials) {
+        if (!mat.quantity_used) {
+          toast.error("Please enter quantity used for all selected materials.");
+          return;
+        }
+        console.log("mat", mat)
+        // Transform payload to match backend schema
+        const payload = {
+          material_Name: mat.material_Id, // rename to match schema
+          quantity_used: Number(mat.quantity_used), // convert to number
+          date: mat.date,
+          file: mat.file,
+          purpose: formData.purpose,
+        };
 
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    toast.error("Something went wrong.");
-  }
-};
+        const response = await addstockoutward(payload);
+        if (response.status === 201) {
+          toast.success(`Stock Outward for ${mat.material_Id} added successfully!`);
+        } else {
+          toast.error(`Failed to add stock outward for ${mat.material_Id}.`);
+        }
+      }
+
+      // Reset form after all materials processed
+      setFormData({ materials: [], purpose: '' });
+      setTimeout(() => navigate("/dashboard/stock-outward"), 2000);
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Something went wrong.");
+    }
+  };
+  const handleFileUpload = async (material, e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const uploadFormData = new FormData();
+    uploadFormData.append('media', file);
+
+    try {
+      const res = await axios.post(`${BASE_URL}/upload`, uploadFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      console.log("res", res)
+
+      const newMaterials = [...formData.materials];
+      newMaterials[material].file = { "url": res.data.fileUrl, "type": file.type }
+      setFormData(prev => ({ ...prev, materials: newMaterials }));
+
+      toast.success("File uploaded");
+    } catch (error) {
+      toast.error("Upload failed");
+    }
+  };
+  const isImage = (type) => {
+    return type.startsWith('image/');
+  };
+
+  const isPDF = (type) => {
+    return type === 'application/pdf';
+  };
+  const handleRemoveFile = (materialIndex) => {
+    const newMaterials = [...formData.materials];
+    newMaterials[materialIndex].file = {};
+    setFormData(prev => ({ ...prev, materials: newMaterials }));
+  };
 
   return (
     <div className="container mt-4 overflows">
@@ -261,11 +169,20 @@ const handleSubmit = async (e) => {
             {formData.materials.map((mat, index) => {
               const materialInfo = materialDropdown.find(m => m.value === mat.material_Id);
               return (
+
                 <Row key={index} className="mb-3 align-items-end">
+                  <Row className='d-flex' style={{ justifyContent: "end" }}>
+                    <Col md={2}>
+                      <div className='mb-4 position-relative'>
+                        <Button variant="danger" onClick={() => handleRemoveMaterial(index)}>
+                          Remove
+                        </Button>
+                      </div>
+                    </Col></Row>
                   <Col md={3}>
-                  <div className='mb-4 position-relative'>
-                    <Form.Label>Material Name</Form.Label>
-                    <Form.Control type="text" value={materialInfo?.label} disabled />
+                    <div className='mb-4 position-relative'>
+                      <Form.Label>Material Name</Form.Label>
+                      <Form.Control type="text" value={materialInfo?.label} disabled />
                     </div>
                   </Col>
 
@@ -286,14 +203,44 @@ const handleSubmit = async (e) => {
                       disabled
                     />
                   </Col>
-
-                  <Col md={2}>
-                                 <div className='mb-4 position-relative'>
-                    <Button variant="danger" onClick={() => handleRemoveMaterial(index)}>
-                      Remove
-                    </Button>
-                    </div>
+                  <Col md={6}>
+                    <Input
+                      label="Upload File"
+                      type="file"
+                      onChange={(e) => handleFileUpload(index, e)}
+                    />
                   </Col>
+                  {mat.file && mat.file.url && (
+                    <Col md={3} className="mt-2">
+                      <Card className="p-2 position-relative">
+                        {isImage(mat.file.type) ? (
+                          <img
+                            src={`${BASE_URL}${mat.file.url}`}
+                            alt="uploaded"
+                            style={{ width: '100%', height: 'auto' }}
+                          />
+                        ) : isPDF(mat.file.type) ? (
+                          <a href={`${BASE_URL}${mat.file.url}`} target="_blank" rel="noreferrer">
+                            📄 View PDF
+                          </a>
+                        ) : (
+                          <a href={`${BASE_URL}${mat.file.url}`} target="_blank" rel="noreferrer">
+                            📁 Download File
+                          </a>
+                        )}
+
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          style={{ position: 'absolute', top: 5, right: 5 }}
+                          onClick={() => handleRemoveFile(index)}
+                        >
+                          ✖
+                        </Button>
+                      </Card>
+                    </Col>
+                  )}
+
                 </Row>
               );
             })}

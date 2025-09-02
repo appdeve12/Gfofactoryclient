@@ -6,6 +6,10 @@ export const API_ROUTES = {
 
   REGISTER: '/api/users/register',
   VIEW_ALL_ADMINS:"/api/users/alladmin",
+  BLOCKED_UNBLOCKED_ADMIN:"/api/users/toggle-block",
+  RESET_PASSWORD:"/api/users/reset-password",
+  MANAGE_PERMISISON:"/api/users/admin/permissions",
+  UPDATE_LIMIT:"",
   //STOCK INWARD
   ADD_STOCK_INWARD:"/api/materials/create",
   GET_ALL_STOCK_INWARD:"/api/materials/all",
@@ -25,4 +29,5 @@ DASHBOARD_STATS:"/api/stock/autostock",
   GET_PARTICULAR_MATERIALDATA:"/api/materialsname",
   DELETE_PARTICULAR_MATERIALDATA:"/api/materialsname",
   UPDATE_PARTICULR_MATERIALDATA:"/api/materialsname",
+  UPDATE_MATERIAL_LIMIT:"/api/materialsname/"
 };
