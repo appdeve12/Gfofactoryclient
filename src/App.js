@@ -23,6 +23,7 @@ import Materialcost from './cantainers/materialcost/Materialcost';
 import PlaceOrder from './cantainers/placeOrder/PlaceOrder';
 import EditStockOutward from './cantainers/stockout/EditStockOutward';
 import OrderPlacedData from './cantainers/placeOrder/OrderPlacedData';
+import AllOrder from './cantainers/placeOrder/AllOrder';
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
                                         <Route path="place-order/:materialId" element={<PlaceOrder/>} />
                                           <Route path="edit-stock-outward/:id" element={<EditStockOutward/>} />
                                             <Route path="order-placed/:id" element={<OrderPlacedData/>} />
+                                                  <Route path="all-order" element={<AllOrder/>} />
                
         </Route>
       </Routes>

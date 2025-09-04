@@ -125,7 +125,11 @@ const Sidebar = ({ collapsed ,userData}) => (
     <FaArrowUp className="sidebar-icon" />
     {!collapsed && <span className="sidebar-label">Material Cost</span>}
   </Nav.Link>
-
+     
+  <Nav.Link as={Link} to="all-order">
+    <FaArrowUp className="sidebar-icon" />
+    {!collapsed && <span className="sidebar-label">Orders</span>}
+  </Nav.Link>
 
 
     </Nav>

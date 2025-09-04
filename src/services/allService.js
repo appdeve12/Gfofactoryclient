@@ -117,3 +117,6 @@ export const checkmaterial=(id)=>{
 export const getorderplacedtomartivulrID=(id)=>{
   return axiosInstance.get(`${API_ROUTES.CHECKORDER_PLACED_BY_MATERIAL}/${id}`)
 }
+export const allorder=()=>{
+  return axiosInstance.get(`${API_ROUTES.ALL_ORDER}`)
+}

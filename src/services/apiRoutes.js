@@ -52,6 +52,6 @@ DASHBOARD_STATS:"/api/stock/autostock",
 
   SUPERVISIOR_REVIEW:"/api/materials/review",
   PLACE_ORDER:"/api/order/place-order",
-  CHECKORDER_PLACED_BY_MATERIAL:"/api/order/orders-by-material"
-  
+  CHECKORDER_PLACED_BY_MATERIAL:"/api/order/orders-by-material",
+  ALL_ORDER:"/api/order/my-orders"
 };
