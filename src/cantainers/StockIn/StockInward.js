@@ -66,12 +66,13 @@ const StockInward = () => {
     const searchLower = search.toLowerCase();
     const seletedmaterialtype = selectedmaterial.toLowerCase();
     const filtered = stockInwardData.filter(item => {
-      const nameMatch = item?.material_Name?.name.toLowerCase().includes(searchLower);
+      const nameMatch = item?.material_Name?.name.toLowerCase().includes(searchLower) || item.user?.name.toLowerCase().includes(searchLower);
+
       const typeMatch = item?.material_Name?.type.toLowerCase().includes(seletedmaterialtype);
       const date = new Date(item.created_At);
       const dateMatch =
         (!startDate || date >= startDate) && (!endDate || date <= endDate);
-      return nameMatch && dateMatch && typeMatch;
+      return nameMatch && dateMatch && typeMatch ;
     });
 
     setFilterData(filtered);
@@ -176,7 +177,7 @@ const StockInward = () => {
     <Container className="mt-4">
       <Card>
         <Card.Header className="d-flex justify-content-between align-items-center flex-wrap gap-2">
-          <h4 className="mb-0">Material Stock Inward</h4>
+          <h4 className="mb-0">Material Stock In</h4>
           <Button variant="outline-primary" size="sm" onClick={handleAddStock}>
             Add Stock
           </Button>
@@ -188,10 +189,10 @@ const StockInward = () => {
 
             <Form.Control
               type="text"
-              placeholder="Search material..."
+              placeholder="Search material and user name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ maxWidth: '200px' }}
+              style={{ maxWidth: '300px' }}
             />
             <Form.Select aria-label="Default select example " onChange={(e) => handedropchnage(e)} style={{ maxWidth: '300px' }} >
               <option>Select The Type</option>
