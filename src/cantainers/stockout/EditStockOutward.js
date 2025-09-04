@@ -46,6 +46,7 @@ const EditStockOutward = () => {
   }, [id]);
 
   const handleChange = (e) => {
+    debugger;
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };

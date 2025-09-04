@@ -111,6 +111,9 @@ export const getMaterialHistory=(id)=>{
 export const markplaceOrder=(data)=>{
   return axiosInstance.post(API_ROUTES.PLACE_ORDER,data)
 }
-export const checkmaterial=()=>{
-  return axiosInstance.get(`${API_ROUTES.CHECKORDER_PLACED_BY_MATERIAL}`)
+export const checkmaterial=(id)=>{
+  return axiosInstance.get(`${API_ROUTES.CHECKORDER_PLACED_BY_MATERIAL}/${id}`)
+}
+export const getorderplacedtomartivulrID=(id)=>{
+  return axiosInstance.get(`${API_ROUTES.CHECKORDER_PLACED_BY_MATERIAL}/${id}`)
 }

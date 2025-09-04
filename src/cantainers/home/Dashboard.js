@@ -59,6 +59,7 @@ const [placedMaterialIds, setPlacedMaterialIds] = useState([]);
           current_stock: item.current_stock,
           type:item.type,
           limit:item.limit,
+          isOrdered:item.isOrdered,
           ...item
         }));
          const customHeadings =response.data.data.map((item) => ({
@@ -146,6 +147,9 @@ const handleConfirm=async(data)=>{
   }catch(error){
 
   }
+}
+const handlevieworderwhomtoplaced=(item)=>{
+    navigate(`/dashboard/order-placed/${item.material_id}`);
 }
 
 const fetchcheckorderplaced = async () => {
@@ -246,17 +250,24 @@ useEffect(() => {
       </td>
     )}
 
- <td>
+<td>
   {isExceed ? (
-    <Button variant="warning" onClick={() => handleOrderToPlace(item)}>
-      Order to Be Place
-    </Button>
+    item.isOrdered ? (
+      <Button variant="success" onClick={() => handlevieworderwhomtoplaced(item)}>
+        Order Placed
+      </Button>
+    ) : (
+      <Button variant="warning" onClick={() => handleOrderToPlace(item)}>
+        Order to Be Placed
+      </Button>
+    )
   ) : (
     <Button variant="secondary" disabled>
       Stock is Sufficient
     </Button>
   )}
 </td>
+
 
   </tr>
       );

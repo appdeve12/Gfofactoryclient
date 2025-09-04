@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form } from "react-bootstrap";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Eye icons
 
-const Input = ({  required, label, type, placeholder, value, onChange }) => {
+const Input = ({  required, label, type, placeholder, name,value, onChange }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const toggleVisibility = () => {
@@ -17,6 +17,7 @@ const Input = ({  required, label, type, placeholder, value, onChange }) => {
       <Form.Label>{label}</Form.Label>
       <Form.Control
       required={required}
+      name={name}
         type={inputType}
         placeholder={placeholder}
         {...(type !== 'file' ? { value: value } : {})}

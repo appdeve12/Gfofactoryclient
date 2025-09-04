@@ -146,6 +146,7 @@ const Addmaterial = () => {
                 <th>Material Name</th>
                 <th>Description</th>
                        <th>Type</th>
+                         <th>Created By</th>
                 
                 {userRole === 'supervisior' && <th>Action</th>}
               </tr>
@@ -162,6 +163,7 @@ const Addmaterial = () => {
                     <td>{item.name}</td>
                     <td>{item.description}</td>
                         <td>{item.type}</td>
+                              <td>{item.createdBy.name}</td>
                     {userRole === 'supervisior' && (
                       <td>
                         <Button

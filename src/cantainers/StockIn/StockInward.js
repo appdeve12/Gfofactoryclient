@@ -133,7 +133,7 @@ const StockInward = () => {
     try {
       const response = await makeeditrequies(item);
       if (response.status == 200) {
-        toast.success("Request Market Successfully")
+        toast.success("Request Edit Marked Successfully")
         fetchStockInwardData();
       }
 
@@ -148,7 +148,7 @@ const StockInward = () => {
     try {
       const response = await markasdone(item);
       if (response.status == 200) {
-        toast.success("mATERDONE SUCESSFULLY");
+        toast.success("Mark Done Successfully");
         fetchStockInwardData();
       }
     } catch (error) {
@@ -160,7 +160,7 @@ const StockInward = () => {
     try {
       const response = await supervisiorappredrequest(item);
       if (response.status == 200) {
-        toast.success("request approved sucessfully");
+        toast.success("Request approved successfully");
         fetchStockInwardData();
       }
     } catch (error) {

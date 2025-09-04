@@ -43,7 +43,7 @@ const StockInwardDescription = () => {
         if(res.status==200){
         const response = await supervisiorappredrequest(item);
         if (response.status == 200) {
-          toast.success("request approved sucessfully");
+          toast.success("request approved successfully");
         fetchStockInwardParticular()
         }}
       } catch (error) {
