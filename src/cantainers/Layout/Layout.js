@@ -120,12 +120,12 @@ const Sidebar = ({ collapsed ,userData}) => (
         <FaArrowUp className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Stock Outward</span>}
       </Nav.Link>
-          {userData?.user?.role === "supervisior" && (
+     
   <Nav.Link as={Link} to="material-cost">
     <FaArrowUp className="sidebar-icon" />
     {!collapsed && <span className="sidebar-label">Material Cost</span>}
   </Nav.Link>
-)}
+
 
 
     </Nav>

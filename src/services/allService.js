@@ -50,6 +50,21 @@ export const getallstockoutwards=()=>{
 export const getallstockoutwardsadmin=()=>{
   return axiosInstance.get(API_ROUTES.GET_ALL_STOCK_OUTWARD_ADMIN)
 }
+export const getparticulrstockoutward=(id)=>{
+  return axiosInstance.get(`${API_ROUTES.GET_PARTICULR_STOCK_OUTWARD}/${id}`)
+}
+export const updateparticulrstock=(id,data)=>{
+  return axiosInstance.put(`${API_ROUTES.UPDATE_PARTICULR_STOCK_OUTWARD}/${id}`,data)
+}
+export const markStockOutwardAsDone=(id)=>{
+  return axiosInstance.patch(`${API_ROUTES.MARK_STOCK_OUTWAD_DONE}/${id}`)
+}
+export const markEDITREQUEST=(id)=>{
+  return axiosInstance.patch(`${API_ROUTES.MARK_EDIT_STOCK_OUTWARD_REQUEST}/${id}`)
+}
+export const markappovededitrequest=(id)=>{
+  return axiosInstance.patch(`${API_ROUTES.MART_APPROVED_STOCK_OUTWARD_REQUEST}/${id}`)
+}
 export const dashboardstats=()=>{
   return axiosInstance.get(API_ROUTES.DASHBOARD_STATS)
 }
@@ -95,4 +110,7 @@ export const getMaterialHistory=(id)=>{
 }
 export const markplaceOrder=(data)=>{
   return axiosInstance.post(API_ROUTES.PLACE_ORDER,data)
+}
+export const checkmaterial=()=>{
+  return axiosInstance.get(`${API_ROUTES.CHECKORDER_PLACED_BY_MATERIAL}`)
 }

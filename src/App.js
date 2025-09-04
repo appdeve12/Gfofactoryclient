@@ -21,6 +21,7 @@ import ProtectedRoute from './cantainers/ProtectedRoute';
 import StockInwardDecription from './cantainers/StockIn/StockInwardDecription';
 import Materialcost from './cantainers/materialcost/Materialcost';
 import PlaceOrder from './cantainers/placeOrder/PlaceOrder';
+import EditStockOutward from './cantainers/stockout/EditStockOutward';
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
                <Route path="permission" element={<Permissions   />} />
                               <Route path="material-cost" element={<Materialcost   />} />
                                         <Route path="place-order/:materialId" element={<PlaceOrder/>} />
+                                          <Route path="edit-stock-outward/:id" element={<EditStockOutward/>} />
                
         </Route>
       </Routes>

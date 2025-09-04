@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { getMaterialDone } from "../../services/allService";
 import { Table, Container, Form, Pagination } from "react-bootstrap";
-
+import { useLocation } from "react-router-dom";
 const Materialcost = () => {
+  const location = useLocation();
+  const materialName = location.state?.materialName;
+  console.log("materialName",materialName)
+
   const [materials, setMaterials] = useState([]);
   const [filterMaterials, setFilterMaterials] = useState([]);
   const [search, setSearch] = useState("");
-
+  console.log(search)
+  useEffect(()=>{
+    if(materialName)
+setSearch(materialName)
+  },[materialName])
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 

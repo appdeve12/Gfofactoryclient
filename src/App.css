@@ -12,6 +12,25 @@
     max-height: 80vh;
     overflow-y: auto;
 }
+.stock-exceed {
+  background-color: #ffe6e6; /* light red */
+  animation: popRow 1s ease-in-out infinite alternate;
+  font-weight: bold;
+  transform-origin: center;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+  border-left: 4px solid red;
+  color:red !important
+}
+
+@keyframes popRow {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {

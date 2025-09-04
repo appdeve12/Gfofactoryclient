@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Table, Card, Button, Modal, Form ,Row,Col} from "react-bootstrap";
+import { Table, Card, Button, Modal, Form ,Row,Col,Container} from "react-bootstrap";
 import { getMaterialHistory, markplaceOrder } from "../../services/allService";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
+const navigate = useNavigate();
+
   const { materialId } = useParams();
   const [material, setMaterial] = useState(null);
   const [history, setHistory] = useState([]);
@@ -85,18 +88,29 @@ useEffect(() => {
   };
 
   return (
-    <Card className="m-4 p-4">
-      <h3>Place Order for {material?.name}</h3>
-      <p><b>Type:</b> {material?.type}</p>
-      <p><b>Limit:</b> {material?.limit}</p>
-
-      <h5>Previous Purchase History</h5>
+        <Container className="mt-4">
+    <Card >
+   <Card.Header className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+     <h3 className="mb-0">Place Order for {material?.name}</h3>
+          <p className="mb-0"><strong>Type:</strong> {material?.type}</p>
+             <Button
+  variant="info"
+  onClick={() =>
+    navigate("/dashboard/material-cost", {
+      state: { materialName: material?.name },
+    })
+  }
+>
+  View Material Cost History
+</Button>
+        </Card.Header>
+   <Card.Body>
+      <h5 className="mt-4">Previous Purchase Supplier</h5>
       <Table bordered hover responsive>
         <thead className="table-dark">
           <tr>
             <th>#</th>
             <th>Supplier</th>
-           
             <th>Action</th>
           </tr>
         </thead>
@@ -106,7 +120,6 @@ useEffect(() => {
               <tr key={item.id}>
                 <td>{i + 1}</td>
                 <td>{item.supplier}</td>
-              
                 <td>
                   <Button
                     variant="warning"
@@ -122,11 +135,14 @@ useEffect(() => {
             ))
           ) : (
             <tr>
-              <td colSpan="8" className="text-center">No history found</td>
+              <td colSpan="3" className="text-center">No history found</td>
             </tr>
           )}
         </tbody>
       </Table>
+      
+      </Card.Body>
+    </Card>
 
       {/* Modal for placing order */}
 <Modal show={showModal} onHide={() => setShowModal(false)} size="lg">
@@ -273,7 +289,8 @@ useEffect(() => {
 
 
 
-    </Card>
+
+    </Container>
   );
 };
 

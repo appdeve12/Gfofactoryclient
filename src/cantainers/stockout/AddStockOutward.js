@@ -9,9 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { BASE_URL } from '../../services/apiRoutes';
+import ConfirmationModal from '../../components/common/ConfirmationModal';
 const AddStockOutward = () => {
   const navigate = useNavigate();
-
+const [show,setshow]=useState(false)
   // formData now holds an array of selected materials and a shared purpose
   const [formData, setFormData] = useState({
     materials: [], // [{ material_Id: '', quantity_used: '', date: '' }]
@@ -95,7 +96,8 @@ const AddStockOutward = () => {
 
         const response = await addstockoutward(payload);
         if (response.status === 201) {
-          toast.success(`Stock Outward for ${mat.material_Id} added successfully!`);
+          console.log(response.data.message)
+          toast.success(`${response.data.message}`);
         } else {
           toast.error(`Failed to add stock outward for ${mat.material_Id}.`);
         }
@@ -104,7 +106,7 @@ const AddStockOutward = () => {
       // Reset form after all materials processed
       setFormData({ materials: [], purpose: '' });
       setTimeout(() => navigate("/dashboard/stock-outward"), 2000);
-
+setshow(false);
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Something went wrong.");
@@ -144,6 +146,9 @@ const AddStockOutward = () => {
     newMaterials[materialIndex].file = {};
     setFormData(prev => ({ ...prev, materials: newMaterials }));
   };
+const handleClose=()=>{
+  setshow(false)
+}
 
   return (
     <div className="container mt-4 overflows">
@@ -152,7 +157,7 @@ const AddStockOutward = () => {
           <h4 className="mb-0">Add Stock Outward</h4>
         </Card.Header>
         <Card.Body>
-          <Form onSubmit={handleSubmit}>
+          <Form>
             {/* Material Selection */}
             <Row className="mb-3">
               <Col md={6}>
@@ -260,13 +265,15 @@ const AddStockOutward = () => {
 
             {/* Submit */}
             <div className="text-end mt-4">
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="button" onClick={()=>setshow(true)}>
                 Submit
               </Button>
             </div>
           </Form>
         </Card.Body>
       </Card>
+      {show && <ConfirmationModal show={show} handleConfirm={handleSubmit} handleClose={handleClose} modalbody="Please Check All  Fields before Submit" ></ConfirmationModal>}
+
     </div>
   );
 };

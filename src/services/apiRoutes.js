@@ -24,6 +24,11 @@ export const API_ROUTES = {
 CREATE_STOCK_OUTWARD:"/api/stockoutward/create",
 GET_ALL_STOCK_OUTWARD:"/api/stockoutward/all",
 GET_ALL_STOCK_OUTWARD_ADMIN:"/api/stockoutward/alladmin",
+GET_PARTICULR_STOCK_OUTWARD:"/api/stockoutward/stock-outward",
+UPDATE_PARTICULR_STOCK_OUTWARD:"/api/stockoutward/edit",
+MARK_STOCK_OUTWAD_DONE:"/api/stockoutward/mark-done",
+MARK_EDIT_STOCK_OUTWARD_REQUEST:"/api/stockoutward/request-edit",
+MART_APPROVED_STOCK_OUTWARD_REQUEST:"/api/stockoutward/approve-edit-request",
 
 //DASHBOARD STATS
 DASHBOARD_STATS:"/api/stock/autostock",
@@ -46,6 +51,7 @@ DASHBOARD_STATS:"/api/stock/autostock",
   SUPERVISIOR_FINAL_REVIEW:"/api/materials/approve-edit",
 
   SUPERVISIOR_REVIEW:"/api/materials/review",
-  PLACE_ORDER:"/api/order/place-order"
+  PLACE_ORDER:"/api/order/place-order",
+  CHECKORDER_PLACED_BY_MATERIAL:"/api/order/material"
   
 };

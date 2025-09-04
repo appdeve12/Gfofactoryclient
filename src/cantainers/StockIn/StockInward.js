@@ -306,6 +306,16 @@ const StockInward = () => {
           >
             Delete
           </Button>
+           {item.status === "done" || item.status === "final-done" ? null : (
+          <Button
+            variant="outline-success"
+            size="sm"
+            onClick={(e) =>{e.stopPropagation(); markdone(item._id)}}
+               disabled={item.status === "request-pending"}
+          >
+            Mark Done
+          </Button>
+        )}
       
       </>
     ) : (

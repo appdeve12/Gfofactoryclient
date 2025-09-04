@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { dashboardstats, getallMaterialName, updateLimit } from '../../services/allService';
+import { checkmaterial, dashboardstats, getallMaterialName, updateLimit } from '../../services/allService';
 import {
   Table,
   Container,
@@ -27,6 +27,9 @@ const Dashboard = () => {
     console.log("userDt",userDt)
   const fileName = "stockoutwad"; // here enter filename for your excel file
   const dispatch=useDispatch()
+const [placedMaterialIds, setPlacedMaterialIds] = useState([]);
+
+
   const [search, setSearch] = useState('');
   const [openModel,setopenModel]=useState(false);
     const [isLimitExceed,setisLimitExceed]=useState(false);
@@ -145,6 +148,26 @@ const handleConfirm=async(data)=>{
   }
 }
 
+const fetchcheckorderplaced = async () => {
+  try {
+    const response = await checkmaterial(); // your API call
+
+    if (response?.data?.success) {
+      // Extract unique material IDs that have any orders
+      const materialIds = [
+        ...new Set(response.data.data.map((order) => order.material))
+      ];
+      setPlacedMaterialIds(materialIds);
+    }
+  } catch (error) {
+    console.error("Error checking placed orders:", error);
+  }
+};
+
+useEffect(() => {
+  fetchcheckorderplaced();
+}, []);
+
   return (
     <Container className="mt-4">
       <Card>
@@ -186,7 +209,7 @@ const handleConfirm=async(data)=>{
                 <th>Current Stock</th>
                 <th>Limit</th>
         {userDt.user.role=="supervisior" &&  <th>Action</th>} 
-               {userDt.user.role=="supervisior" &&  <th>Placed Order</th>} 
+               {userDt.user.role=="supervisior" ?  <th>Placed Order</th>:<th>Placed Order</th>} 
                 
               </tr>
             </thead>
@@ -201,38 +224,41 @@ const handleConfirm=async(data)=>{
     currentRows.map((item, index) => {
       const isExceed = item.current_stock <= item.limit; // check per row
       return (
-        <tr key={index}>
-          <td>{indexOfFirstRow + index + 1}</td>
-          <td style={{ backgroundColor: isExceed ? "red" : "inherit" }}>
-            {item.material_Name}
-          </td>
-          <td>{item.total_stock_in}</td>
-          <td>{item.total_stock_out}</td>
-          <td>{item.current_stock}</td>
-          <td>{item.limit}</td>
-          
-          {userDt.user.role === "supervisior" && (
-            <td>
-              {item.limit ? (
-                <Button onClick={() => addoreditmodelopen(item)}>Edit Limit</Button>
-              ) : (
-                <Button onClick={() => addoreditmodelopen(item)}>Add Limit</Button>
-              )}
-            </td>
-          )}
+     <tr
+    key={index}
+    className={isExceed ? "stock-exceed" : ""}
 
-          {/* ✅ Show Order Button if below/equal to limit */}
-          {isExceed && (
-            <td>
-              <Button
-                variant="warning"
-                onClick={() => handleOrderToPlace(item)}
-              >
-                Order to Be Place
-              </Button>
-            </td>
-          )}
-        </tr>
+  >
+    <td>{indexOfFirstRow + index + 1}</td>
+    <td>{item.material_Name}</td>
+    <td>{item.total_stock_in}</td>
+    <td>{item.total_stock_out}</td>
+    <td>{item.current_stock}</td>
+    <td>{item.limit}</td>
+    
+    {userDt.user.role === "supervisior" && (
+      <td>
+        {item.limit ? (
+          <Button onClick={() => addoreditmodelopen(item)}>Edit Limit</Button>
+        ) : (
+          <Button onClick={() => addoreditmodelopen(item)}>Add Limit</Button>
+        )}
+      </td>
+    )}
+
+ <td>
+  {isExceed ? (
+    <Button variant="warning" onClick={() => handleOrderToPlace(item)}>
+      Order to Be Place
+    </Button>
+  ) : (
+    <Button variant="secondary" disabled>
+      Stock is Sufficient
+    </Button>
+  )}
+</td>
+
+  </tr>
       );
     })
   )}
