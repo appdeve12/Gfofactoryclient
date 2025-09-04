@@ -56,11 +56,11 @@ const Addmaterial = () => {
   // Filter by search + date
   useEffect(() => {
     const searchLower = search.toLowerCase();
-    const filtered = materialData.filter(item => {
-      const nameMatch = item.name.toLowerCase().includes(searchLower);
+    const filtered = materialData.filter(item => 
+      item.name.toLowerCase().includes(searchLower)||item.createdBy.name.toLowerCase().includes(searchLower)
    
-      return nameMatch;
-    });
+     
+    );
 
     setFilterData(filtered);
     setCurrentPage(1);
@@ -127,10 +127,10 @@ const Addmaterial = () => {
           <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
             <Form.Control
               type="text"
-              placeholder="Search material..."
+              placeholder="Search material and Created By..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ maxWidth: '200px' }}
+              style={{ maxWidth: '400px' }}
             />
 
           

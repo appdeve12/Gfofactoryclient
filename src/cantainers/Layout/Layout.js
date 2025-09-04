@@ -110,15 +110,15 @@ const Sidebar = ({ collapsed ,userData}) => (
       </Nav.Link>
       <Nav.Link as={Link} to="materialdata">
         <FaArrowDown className="sidebar-icon" />
-        {!collapsed && <span className="sidebar-label">Material Data</span>}
+        {!collapsed && <span className="sidebar-label">Material Name</span>}
       </Nav.Link>
       <Nav.Link as={Link} to="stock-inward">
         <FaArrowDown className="sidebar-icon" />
-        {!collapsed && <span className="sidebar-label">Stock Inward</span>}
+        {!collapsed && <span className="sidebar-label">Stock In</span>}
       </Nav.Link>
       <Nav.Link as={Link} to="stock-outward">
         <FaArrowUp className="sidebar-icon" />
-        {!collapsed && <span className="sidebar-label">Stock Outward</span>}
+        {!collapsed && <span className="sidebar-label">Stock Out</span>}
       </Nav.Link>
      
   <Nav.Link as={Link} to="material-cost">
