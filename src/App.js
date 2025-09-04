@@ -18,6 +18,10 @@ import AddEditMaterialName from './cantainers/addMaterials/AddEditMaterialName';
 import "./App.css"
 import Permissions from './cantainers/permissions/Permissions';
 import ProtectedRoute from './cantainers/ProtectedRoute';
+import StockInwardDecription from './cantainers/StockIn/StockInwardDecription';
+import Materialcost from './cantainers/materialcost/Materialcost';
+import PlaceOrder from './cantainers/placeOrder/PlaceOrder';
+
 function App() {
   return (
     <Router>
@@ -40,6 +44,7 @@ function App() {
         <Route path="register-user" element={<SignUp />} />
           <Route path="profile" element={<Profile />} />
           <Route path="stock-inward" element={<StockInward />} />
+            <Route path="stock-inward-details/:id" element={<StockInwardDecription />} />
           
           <Route path="add-stock-inward" element={<AddEditStockInward />} />
           <Route path="edit-stock-inward/:id" element={<EditStockInward />} />
@@ -50,6 +55,9 @@ function App() {
           <Route path="edit-material-name/:id" element={<AddEditMaterialName />} />
           <Route path="materialdata" element={<Addmaterial />} />
                <Route path="permission" element={<Permissions   />} />
+                              <Route path="material-cost" element={<Materialcost   />} />
+                                        <Route path="place-order/:materialId" element={<PlaceOrder/>} />
+               
         </Route>
       </Routes>
       <ToastContainer />

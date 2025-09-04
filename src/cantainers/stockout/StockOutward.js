@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getallstockoutwards } from '../../services/allService';
+import { getallstockoutwards, getallstockoutwardsadmin } from '../../services/allService';
 import {
   Table,
   Button,
@@ -12,8 +12,11 @@ import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { BASE_URL } from '../../services/apiRoutes';
+import { useSelector } from 'react-redux';
 
 const StockOutward = () => {
+    const userDt = useSelector(state => state.auth.userdata);
+    const userRole = userDt?.user?.role;
   const navigate = useNavigate();
   const [stockoutsData, setStockoutsData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -34,18 +37,30 @@ const StockOutward = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  // Fetch all stock outward data
-  const fetchStockOutward = async () => {
-    try {
-      const response = await getallstockoutwards();
-      if (response.status === 200) {
-        setStockoutsData(response.data.stockOutwardEntries);
+ 
+
+   const fetchStockOutward = async () => {
+      try {
+        let response;
+        if (userRole === 'supervisior') {
+          response = await getallstockoutwards();
+          if (response.status === 200) {
+             setStockoutsData(response.data.stockOutwardEntries);
         setFilteredData(response.data.stockOutwardEntries);
+          }
+        } else {
+          response = await getallstockoutwardsadmin();
+          if (response.status === 200) {
+            setStockoutsData(response.data.stockOutwardEntries);
+        setFilteredData(response.data.stockOutwardEntries);
+          }
+        }
+      
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    } catch (error) {
-      console.error('Error fetching stock outward data:', error);
-    }
-  };
+    };
+  
 
   // Initial fetch
   useEffect(() => {
@@ -102,12 +117,12 @@ setselectedmaterial(selected)
               onChange={(e) => setSearch(e.target.value)}
               style={{ maxWidth: '200px' }}
             />
-                  {/* <Form.Select aria-label="Default select example "       style={{ maxWidth: '300px' }} onChange={(e)=>handedropchnage(e)} >
+                  <Form.Select aria-label="Default select example "       style={{ maxWidth: '300px' }} onChange={(e)=>handedropchnage(e)} >
                   <option>Select The Type</option>
                   <option value="raw material">Raw Material</option>
                   <option value="ready material">Ready Material</option>
                 
-                </Form.Select> */}
+                </Form.Select>
 
             <DatePicker
               selected={startDate}

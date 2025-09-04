@@ -13,7 +13,7 @@ import { FaUserFriends } from "react-icons/fa";
 import { FaUserCheck } from "react-icons/fa6";
 import { RiLogoutCircleLine } from "react-icons/ri";
 const Header = ({ toggleSidebar, userData }) => {
-  console.log("userData", userData)
+  console.log("userData", userData?.user?.role)
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef(null)
@@ -26,7 +26,7 @@ const Header = ({ toggleSidebar, userData }) => {
     console.log("Logout clicked");
     localStorage.removeItem('token');
     toast.success("Logout Successfully");
-    setTimeout(() => {   
+    setTimeout(() => {
       navigate("/");
     }, 2000)
 
@@ -88,7 +88,7 @@ const Header = ({ toggleSidebar, userData }) => {
             }}>
               {userData?.user?.role == "supervisior" && <button className="dropdown-item" onClick={handleMultipleUser}><FaUserFriends /> Add Multiple User</button>}
               <button className="dropdown-item" onClick={handleProfile}><ImProfile /> View Profile</button>
-              <button className="dropdown-item" onClick={handlePermissionManage}><FaUserCheck /> Manage Permission</button>
+              {/* <button className="dropdown-item" onClick={handlePermissionManage}><FaUserCheck /> Manage Permission</button> */}
               <button className="dropdown-item" onClick={handleLogout}><RiLogoutCircleLine /> Logout</button>
             </div>
           )}
@@ -101,7 +101,7 @@ const Header = ({ toggleSidebar, userData }) => {
 
 
 
-const Sidebar = ({ collapsed }) => (
+const Sidebar = ({ collapsed ,userData}) => (
   <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
     <Nav className="flex-column">
       <Nav.Link as={Link} to="/dashboard">
@@ -120,6 +120,13 @@ const Sidebar = ({ collapsed }) => (
         <FaArrowUp className="sidebar-icon" />
         {!collapsed && <span className="sidebar-label">Stock Outward</span>}
       </Nav.Link>
+          {userData?.user?.role === "supervisior" && (
+  <Nav.Link as={Link} to="material-cost">
+    <FaArrowUp className="sidebar-icon" />
+    {!collapsed && <span className="sidebar-label">Material Cost</span>}
+  </Nav.Link>
+)}
+
 
     </Nav>
   </div>
@@ -135,7 +142,7 @@ const Layout = () => {
     <div className="layout">
       <Header toggleSidebar={toggleSidebar} userData={userDt} />
       <div className="main">
-        <Sidebar collapsed={collapsed} />
+        <Sidebar collapsed={collapsed} userData={userDt} />
         <div className="overflows" style={{ display: "contents" }}>
           <Outlet />
         </div>

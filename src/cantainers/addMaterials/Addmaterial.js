@@ -125,13 +125,13 @@ const Addmaterial = () => {
         <Card.Body>
           {/* Search and Filter Controls */}
           <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
-            {/* <Form.Control
+            <Form.Control
               type="text"
               placeholder="Search material..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{ maxWidth: '200px' }}
-            /> */}
+            />
 
           
 

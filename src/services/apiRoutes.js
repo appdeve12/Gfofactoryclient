@@ -10,15 +10,20 @@ export const API_ROUTES = {
   RESET_PASSWORD:"/api/users/reset-password",
   MANAGE_PERMISISON:"/api/users/admin/permissions",
   UPDATE_LIMIT:"",
+  GET_MATERIAL_HISTORY:"/api/materials/history",
   //STOCK INWARD
   ADD_STOCK_INWARD:"/api/materials/create",
   GET_ALL_STOCK_INWARD:"/api/materials/all",
+  GET_ALL_DONE_MATERIAL:"/api/materials/alldonematerial",
+  GET_ALL_STOCK_INWARD_FOR_SUPERVISIOR:"/api/materials/allforsupervisior",
   GET_PARTICULAR_STOCK_INWARD:"/api/materials",
   DELETE_PARTICULAR_STOCK_INWARD:"/api/materials",
   UPDATE_PARTICULR_STOCK_INWARD:"/api/materials",
+
 //STOCK OYTWARD
 CREATE_STOCK_OUTWARD:"/api/stockoutward/create",
 GET_ALL_STOCK_OUTWARD:"/api/stockoutward/all",
+GET_ALL_STOCK_OUTWARD_ADMIN:"/api/stockoutward/alladmin",
 
 //DASHBOARD STATS
 DASHBOARD_STATS:"/api/stock/autostock",
@@ -29,5 +34,18 @@ DASHBOARD_STATS:"/api/stock/autostock",
   GET_PARTICULAR_MATERIALDATA:"/api/materialsname",
   DELETE_PARTICULAR_MATERIALDATA:"/api/materialsname",
   UPDATE_PARTICULR_MATERIALDATA:"/api/materialsname",
-  UPDATE_MATERIAL_LIMIT:"/api/materialsname/"
+  UPDATE_MATERIAL_LIMIT:"/api/materialsname/",
+
+  //ADMIN Mark As Done (Admin)
+  MARK_AS_DONE:"/api/materials/done",
+  // Make Edit Request (Admin if mistake found)
+  MAKE_EDIT_REQUEST:"/api/materials/request-edit",
+  //SUPERVISIOR EDIT APPROVED REQUEST
+  SUPERVISIOR_EDIT_REQUEST:"/api/materials/approve-edit",
+  //SUPERVISIOR FINAL_APPROVAL
+  SUPERVISIOR_FINAL_REVIEW:"/api/materials/approve-edit",
+
+  SUPERVISIOR_REVIEW:"/api/materials/review",
+  PLACE_ORDER:"/api/order/place-order"
+  
 };

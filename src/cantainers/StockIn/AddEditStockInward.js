@@ -44,6 +44,7 @@ setmatrialdropdown(materialDropdownOptions)
           purchase_date: new Date().toISOString().split("T")[0],
           supplier: '',
           remarks: '',
+          cost:'',
           file: []
         }
       }));
@@ -218,6 +219,14 @@ navigate("/dashboard/stock-inward")
                         type="text"
                         value={materialDetails[material]?.supplier || ''}
                         onChange={(e) => handleInputChange(material, 'supplier', e.target.value)}
+                      />
+                    </Col>
+                       <Col md={4}>
+                      <Input
+                        label="Cost"
+                        type="text"
+                        value={materialDetails[material]?.cost || ''}
+                        onChange={(e) => handleInputChange(material, 'cost', e.target.value)}
                       />
                     </Col>
                   </Row>

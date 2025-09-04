@@ -8,13 +8,23 @@ import {
   Form,
   Button,
 } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { storeallmaterial } from '../../redux/materilslice';
 import DashboardData from './DashboardData';
 import { ExportToExcel } from './ExportToExcel';
 import LimitModal from './LimitModal';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
+    const navigate = useNavigate();
+
+  const handleOrderToPlace = (material) => {
+    // Navigate to new page with material id
+    navigate(`/dashboard/place-order/${material.material_id}`);
+  };
+
+    const userDt = useSelector(state => state.auth.userdata);
+    console.log("userDt",userDt)
   const fileName = "stockoutwad"; // here enter filename for your excel file
   const dispatch=useDispatch()
   const [search, setSearch] = useState('');
@@ -52,7 +62,7 @@ const Dashboard = () => {
        "Material Name":item.material_name,
        "Total Stock In": item.total_stock_in,
            "Total Stock Out":  item.total_stock_out,
-             "Current Stock":  item.current_stock,
+             "Current Stock":  item.current_stock, 
              "type":item.type,
              "limit":item.limit
      }))
@@ -154,13 +164,13 @@ const handleConfirm=async(data)=>{
             className="mb-3"
           />
           </div>
-          {/* <div>
+          <div>
              <Form.Select aria-label="Default select example " onChange={(e) => handedropchnage(e)} style={{ maxWidth: '300px' }} >
                         <option>Select The Type</option>
                         <option value="raw material">Raw Material</option>
                         <option value="ready material">Ready Material</option>
           
-                      </Form.Select></div> */}
+                      </Form.Select></div>
           <div>
          <ExportToExcel apiData={exceldata} fileName={fileName} />
          </div>
@@ -174,32 +184,60 @@ const handleConfirm=async(data)=>{
                 <th>Total Stock In</th>
                 <th>Total Stock Out</th>
                 <th>Current Stock</th>
-                {/* <th>Limit</th>
-          <th>Action</th> */}
+                <th>Limit</th>
+        {userDt.user.role=="supervisior" &&  <th>Action</th>} 
+               {userDt.user.role=="supervisior" &&  <th>Placed Order</th>} 
                 
               </tr>
             </thead>
-            <tbody>
-              {currentRows.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="text-center">
-                    No records found.
-                  </td>
-                </tr>
+<tbody>
+  {currentRows.length === 0 ? (
+    <tr>
+      <td colSpan="7" className="text-center">
+        No records found.
+      </td>
+    </tr>
+  ) : (
+    currentRows.map((item, index) => {
+      const isExceed = item.current_stock <= item.limit; // check per row
+      return (
+        <tr key={index}>
+          <td>{indexOfFirstRow + index + 1}</td>
+          <td style={{ backgroundColor: isExceed ? "red" : "inherit" }}>
+            {item.material_Name}
+          </td>
+          <td>{item.total_stock_in}</td>
+          <td>{item.total_stock_out}</td>
+          <td>{item.current_stock}</td>
+          <td>{item.limit}</td>
+          
+          {userDt.user.role === "supervisior" && (
+            <td>
+              {item.limit ? (
+                <Button onClick={() => addoreditmodelopen(item)}>Edit Limit</Button>
               ) : (
-                currentRows.map((item, index) => (
-                  <tr key={index}>
-                    <td>{indexOfFirstRow + index + 1}</td>
-                    <td style={{ backgroundColor: isLimitExceed ? 'red' : 'inherit' }}>{item.material_Name}</td>
-                    <td>{item.total_stock_in}</td>
-                    <td>{item.total_stock_out}</td>
-                    <td>{item.current_stock}</td>
-                             {/* <td>{item.limit}</td>
-                             <td>{item.limit ?<Button type="click" onClick={()=>addoreditmodelopen(item)}>Edit Limit</Button>:<Button type="click"onClick={()=>addoreditmodelopen(item)}>Add Limit</Button>}</td> */}
-                  </tr>
-                ))
+                <Button onClick={() => addoreditmodelopen(item)}>Add Limit</Button>
               )}
-            </tbody>
+            </td>
+          )}
+
+          {/* ✅ Show Order Button if below/equal to limit */}
+          {isExceed && (
+            <td>
+              <Button
+                variant="warning"
+                onClick={() => handleOrderToPlace(item)}
+              >
+                Order to Be Place
+              </Button>
+            </td>
+          )}
+        </tr>
+      );
+    })
+  )}
+</tbody>
+
           </Table>
 
           {/* Pagination */}

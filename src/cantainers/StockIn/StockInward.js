@@ -7,15 +7,17 @@ import {
   Card,
   Form
 } from 'react-bootstrap';
-import { deleteparticularstockinward, getallstockinwards } from '../../services/allService';
+import { deleteparticularstockinward, getallstockinwards, getMaterialsForSupervisor, makeeditrequies, markasdone, supervisiorappredrequest } from '../../services/allService';
 import { useNavigate } from 'react-router-dom';
 import DeleteModal from './DeleteModal';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import { useDispatch } from 'react-redux';
+import { storeparticularstockin } from '../../redux/stockInwardSlice';
 const StockInward = () => {
+  const dispatch=useDispatch()
   const navigate = useNavigate();
   const userDt = useSelector(state => state.auth.userdata);
   const userRole = userDt?.user?.role;
@@ -23,6 +25,7 @@ const StockInward = () => {
   const [stockInwardData, setStockInwardData] = useState([]);
   const [selectedmaterial, setselectedmaterial] = useState("")
   const [filterData, setFilterData] = useState([]);
+  console.log("filterData",filterData)
   const [search, setSearch] = useState('');
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -33,17 +36,24 @@ const StockInward = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedDeleteId, setSelectedDeleteId] = useState('');
 
-  // Fetch all stock inward data
+
   const fetchStockInwardData = async () => {
     try {
-      const response = await getallstockinwards();
-      if (response.status === 200) {
-        const data = response.data.materials;
-        setStockInwardData(data);
-        setFilterData(data);
+      let response;
+      if (userRole === 'supervisior') {
+        response = await getMaterialsForSupervisor();
+        if (response.status === 200) {
+          setStockInwardData(response.data.materials);
+        }
+      } else {
+        response = await getallstockinwards();
+        if (response.status === 200) {
+          setStockInwardData(response.data.materials);
+        }
       }
+      setFilterData(response.data.materials);
     } catch (error) {
-      console.error('Error fetching stock inward data:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -118,7 +128,50 @@ const StockInward = () => {
     console.log("selected", selected);
     setselectedmaterial(selected)
   }
+  const makearequest = async (item) => {
+    console.log(item);
+    try {
+      const response = await makeeditrequies(item);
+      if (response.status == 200) {
+        toast.success("Request Market Successfully")
+        fetchStockInwardData();
+      }
 
+    } catch (error) {
+
+    }
+
+  }
+  const markdone = async (item) => {
+    debugger;
+    console.log(item);
+    try {
+      const response = await markasdone(item);
+      if (response.status == 200) {
+        toast.success("mATERDONE SUCESSFULLY");
+        fetchStockInwardData();
+      }
+    } catch (error) {
+
+    }
+  }
+  const supervisioreditrequest = async (item) => {
+    console.log(item);
+    try {
+      const response = await supervisiorappredrequest(item);
+      if (response.status == 200) {
+        toast.success("request approved sucessfully");
+        fetchStockInwardData();
+      }
+    } catch (error) {
+
+    }
+  }
+  const clickonparticlurrow=(item)=>{
+    console.log("item",item)
+    dispatch(storeparticularstockin(item))
+   navigate(`/dashboard/stock-inward-details/${item._id}`);
+  }
   return (
     <Container className="mt-4">
       <Card>
@@ -140,12 +193,12 @@ const StockInward = () => {
               onChange={(e) => setSearch(e.target.value)}
               style={{ maxWidth: '200px' }}
             />
-            {/* <Form.Select aria-label="Default select example " onChange={(e) => handedropchnage(e)} style={{ maxWidth: '300px' }} >
+            <Form.Select aria-label="Default select example " onChange={(e) => handedropchnage(e)} style={{ maxWidth: '300px' }} >
               <option>Select The Type</option>
               <option value="raw material">Raw Material</option>
               <option value="ready material">Ready Material</option>
 
-            </Form.Select> */}
+            </Form.Select>
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
@@ -153,7 +206,7 @@ const StockInward = () => {
               className="form-control"
               maxDate={new Date()}
             />
-            
+
             <DatePicker
               selected={endDate}
               onChange={(date) => setEndDate(date)}
@@ -186,7 +239,7 @@ const StockInward = () => {
                 <th>Supplier</th>
                 <th>Remarks</th>
                 <th>User</th>
-                {userRole === 'supervisior' && <th>Action</th>}
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -196,34 +249,105 @@ const StockInward = () => {
                 </tr>
               ) : (
                 currentRows.map((item, index) => (
-                  <tr key={index}>
-                    <td>{indexOfFirstRow + index + 1}</td>
-                    <td>{item?.material_Name?.name || ""}</td>
-                    <td>{item?.purchase_quantity || 'N/A'}</td>
-                    <td>{formatDate(item?.purchase_date) || 'N/A'}</td>
-                    <td>{item?.supplier || 'N/A'}</td>
-                    <td>{item?.remarks || 'N/A'}</td>
-                    <td>{item.user?.name || 'N/A'}</td>
-                    {userRole === 'supervisior' && (
-                      <td>
-                        <Button
-                          variant="outline-primary"
-                          size="sm"
-                          onClick={() => handleEdit(item._id)}
-                          className="me-2"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => handleDeleteClick(item._id)}
-                        >
-                          Delete
-                        </Button>
-                      </td>
-                    )}
-                  </tr>
+                <tr key={index} onClick={() => clickonparticlurrow(item)}>
+  <td>{indexOfFirstRow + index + 1}</td>
+  <td>{item?.material_Name?.name || ""}</td>
+  <td>{item?.purchase_quantity || 'N/A'}</td>
+  <td>{formatDate(item?.purchase_date) || 'N/A'}</td>
+  <td>{item?.supplier || 'N/A'}</td>
+  <td>{item?.remarks || 'N/A'}</td>
+  <td>{item.user?.name || 'N/A'}</td>
+
+  {/* ✅ ACTIONS COLUMN */}
+  <td>
+    {userRole === 'supervisior' ? (
+      <>
+        {(item.status === "request-pending" || item.status === "edit-approved") && (
+          <>
+            {item.status === "edit-approved" && (
+              <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={(e) =>{e.stopPropagation(); handleEdit(item._id)}}
+                className="me-2"
+              >
+                Edit
+              </Button>
+            )}
+
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={(e) =>{e.stopPropagation(); supervisioreditrequest(item._id)}}
+              className="me-2"
+              disabled={item.status=="edit-approved"}
+            >
+                 {item.status === "edit-approved" ? "Approved Request" : "Mark To Approve"}
+
+            </Button>
+          </>
+        )}
+
+     {(item?.createdByRole=='supervisior') &&     <Button
+                variant="outline-primary"
+                size="sm"
+                onClick={(e) =>{e.stopPropagation(); handleEdit(item._id)}}
+                className="me-2"
+              >
+                Edit
+              </Button>
+              }
+
+     
+          <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={(e) => {e.stopPropagation(); handleDeleteClick(item._id);}}
+          >
+            Delete
+          </Button>
+      
+      </>
+    ) : (
+      <>
+        {item.status === "done" || item.status === "final-done" ? null : (
+          item.status === "edit-approved" ? (
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={(e) =>{e.stopPropagation(); handleEdit(item._id)}}
+              className="me-2"
+            >
+              Edit
+            </Button>
+          ) : (
+            <Button
+              variant="outline-warning"
+              size="sm"
+              onClick={(e) =>{e.stopPropagation(); makearequest(item._id)}}
+              className="me-2"
+                disabled={item.status === "request-pending"}
+            >
+              {item.status === "request-pending" ? "Request pending" : "Edit Request"}
+            </Button>
+          )
+        )}
+
+        {item.status === "done" || item.status === "final-done" ? null : (
+          <Button
+            variant="outline-success"
+            size="sm"
+            onClick={(e) =>{e.stopPropagation(); markdone(item._id)}}
+               disabled={item.status === "request-pending"}
+          >
+            Mark Done
+          </Button>
+        )}
+      </>
+    )}
+  </td>
+</tr>
+
                 ))
               )}
             </tbody>

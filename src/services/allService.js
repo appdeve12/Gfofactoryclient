@@ -24,6 +24,13 @@ export const addstockinward=(data)=>{
 export const getallstockinwards=()=>{
   return axiosInstance.get(API_ROUTES.GET_ALL_STOCK_INWARD)
 }
+export const getMaterialsForSupervisor=()=>{
+  return axiosInstance.get(API_ROUTES.GET_ALL_STOCK_INWARD_FOR_SUPERVISIOR)
+}
+export const getMaterialDone=()=>{
+  return axiosInstance.get(API_ROUTES.GET_ALL_DONE_MATERIAL)
+}
+
 export const getparticulrstockinward=(id)=>{
 return axiosInstance.get(`${API_ROUTES.GET_PARTICULAR_STOCK_INWARD}/${id}`)
 }
@@ -39,6 +46,9 @@ export const addstockoutward=(data)=>{
 };
 export const getallstockoutwards=()=>{
   return axiosInstance.get(API_ROUTES.GET_ALL_STOCK_OUTWARD)
+}
+export const getallstockoutwardsadmin=()=>{
+  return axiosInstance.get(API_ROUTES.GET_ALL_STOCK_OUTWARD_ADMIN)
 }
 export const dashboardstats=()=>{
   return axiosInstance.get(API_ROUTES.DASHBOARD_STATS)
@@ -64,4 +74,25 @@ return axiosInstance.delete(`${API_ROUTES.DELETE_PARTICULAR_MATERIALDATA}/${id}`
 }
 export const updateAdminPermissions=(data)=>{
   return axiosInstance.put(API_ROUTES.MANAGE_PERMISISON,data)
+}
+export const markasdone=(id)=>{
+    return axiosInstance.put(`${API_ROUTES.MARK_AS_DONE}/${id}`)
+}
+export const makeeditrequies=(id)=>{
+    return axiosInstance.put(`${API_ROUTES.MAKE_EDIT_REQUEST}/${id}`)
+}
+export const supervisiorappredrequest=(id)=>{
+    return axiosInstance.put(`${API_ROUTES.SUPERVISIOR_EDIT_REQUEST}/${id}`)
+}
+export const finalDone=(id)=>{
+    return axiosInstance.put(`${API_ROUTES.SUPERVISIOR_FINAL_REVIEW}/${id}`)
+}
+export const review=(id)=>{
+    return axiosInstance.put(`${API_ROUTES.SUPERVISIOR_REVIEW}/${id}`)
+}
+export const getMaterialHistory=(id)=>{
+   return axiosInstance.get(`${API_ROUTES.GET_MATERIAL_HISTORY}/${id}`)
+}
+export const markplaceOrder=(data)=>{
+  return axiosInstance.post(API_ROUTES.PLACE_ORDER,data)
 }

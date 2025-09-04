@@ -45,12 +45,12 @@ const fetcchpartivulruserdata = async () => {
     const response = await getparticulrstockinward(id);
     if (response.status === 200) {
       const data = response.data.material;
-
+console.log("data",data)
       // Format purchase_date for input type="date"
       const formattedDate = data.purchase_date ? data.purchase_date.slice(0, 10) : '';
 
       setFormData({
-        material_Name: data.material_Name || '',
+        material_Name: data.material_Name._id || '',
         purchase_quantity: data.purchase_quantity || '',
         purchase_date: formattedDate,
         supplier: data.supplier || '',
