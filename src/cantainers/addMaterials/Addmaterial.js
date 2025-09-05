@@ -22,7 +22,7 @@ const Addmaterial = () => {
   const navigate = useNavigate();
   const userDt = useSelector(state => state.auth.userdata);
   const userRole = userDt?.user?.role;
-  const [selectedmaterial, setselectedmaterial] = useState("")
+
   const [materialData, setmaterialData] = useState([]);
   const [filterData, setFilterData] = useState([]);
   const [search, setSearch] = useState('');
@@ -55,20 +55,16 @@ const Addmaterial = () => {
 
   // Filter by search + date
   useEffect(() => {
-    
-        const seletedmaterialtype = selectedmaterial.toLowerCase();
     const searchLower = search.toLowerCase();
     const filtered = materialData.filter(item => {
-    const nameMatch=  item.name.toLowerCase().includes(searchLower)||item.createdBy.name.toLowerCase().includes(searchLower)
+      const nameMatch = item.name.toLowerCase().includes(searchLower);
    
-      const typeMatch = item?.type.toLowerCase().includes(seletedmaterialtype);
-      return nameMatch && typeMatch
-  });
-  console.log("filtered",filtered)
+      return nameMatch;
+    });
 
     setFilterData(filtered);
     setCurrentPage(1);
-  }, [search, materialData,selectedmaterial]);
+  }, [search, materialData]);
 
   // Pagination logic
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -115,11 +111,7 @@ const Addmaterial = () => {
       handleCloseModal();
     }
   };
-  const handedropchnage = (e) => {
-    const selected = e.target.value;
-    console.log("selected", selected);
-    setselectedmaterial(selected)
-  }
+
   return (
     <Container className="mt-4">
       <Card>
@@ -135,17 +127,11 @@ const Addmaterial = () => {
           <div className="d-flex flex-wrap align-items-center gap-3 mb-3">
             <Form.Control
               type="text"
-              placeholder="Search material and Created By..."
+              placeholder="Search material..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ maxWidth: '400px' }}
+              style={{ maxWidth: '200px' }}
             />
-               <Form.Select aria-label="Default select example " onChange={(e) => handedropchnage(e)} style={{ maxWidth: '300px' }} >
-                          <option>Select The Type</option>
-                          <option value="raw material">Raw Material</option>
-                          <option value="ready material">Ready Material</option>
-            
-                        </Form.Select>
 
           
 

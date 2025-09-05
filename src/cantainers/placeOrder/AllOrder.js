@@ -95,7 +95,7 @@ const AllOrder = () => {
                 <th>GST</th>
                 <th>Billing Address</th>
                 <th>Shipping Address</th>
-            
+                <th>Created By</th>
                 <th>Order Date</th>
               </tr>
             </thead>
@@ -113,7 +113,7 @@ const AllOrder = () => {
                     <td>{order.gstNumber || "N/A"}</td>
                     <td>{order.billingAddress || "N/A"}</td>
                     <td>{order.shippingAddress || "N/A"}</td>
-               
+                    <td>{order.createdBy?.name || "N/A"}</td>
                     <td>{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A"}</td>
                   </tr>
                 ))

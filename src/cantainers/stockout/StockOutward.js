@@ -15,14 +15,14 @@ import { BASE_URL } from '../../services/apiRoutes';
 import { useSelector } from 'react-redux';
 
 const StockOutward = () => {
-    const userDt = useSelector(state => state.auth.userdata);
-    const userRole = userDt?.user?.role;
+  const userDt = useSelector(state => state.auth.userdata);
+  const userRole = userDt?.user?.role;
   const navigate = useNavigate();
   const [stockoutsData, setStockoutsData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
-    const [selectedmaterial,setselectedmaterial]=useState("");
-        const [selectedstatus,setselectedstatus]=useState("")
+  const [selectedmaterial, setselectedmaterial] = useState("");
+  const [selectedstatus, setselectedstatus] = useState("")
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,115 +38,126 @@ const StockOutward = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
- 
 
-   const fetchStockOutward = async () => {
-      try {
-        let response;
-        if (userRole === 'supervisior') {
-          response = await getallstockoutwards();
-          if (response.status === 200) {
-             setStockoutsData(response.data.stockOutwardEntries);
-        setFilteredData(response.data.stockOutwardEntries);
-          }
-        } else {
-          response = await getallstockoutwardsadmin();
-          if (response.status === 200) {
-            setStockoutsData(response.data.stockOutwardEntries);
-        setFilteredData(response.data.stockOutwardEntries);
-          }
+
+  const fetchStockOutward = async () => {
+    try {
+      let response;
+      if (userRole === 'supervisior') {
+        response = await getallstockoutwards();
+        if (response.status === 200) {
+          setStockoutsData(response.data.stockOutwardEntries);
+          setFilteredData(response.data.stockOutwardEntries);
         }
-      
-      } catch (error) {
-        console.error('Error fetching data:', error);
+      } else {
+        response = await getallstockoutwardsadmin();
+        if (response.status === 200) {
+          setStockoutsData(response.data.stockOutwardEntries);
+          setFilteredData(response.data.stockOutwardEntries);
+        }
       }
-    };
-  
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
 
   // Initial fetch
   useEffect(() => {
     fetchStockOutward();
   }, []);
+  useEffect(() => {
+    fetchStockOutward();
 
-  // Filter logic (search + date range)
+
+    const interval = setInterval(() => {
+      fetchStockOutward();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+
+
   useEffect(() => {
     const lowercased = search.toLowerCase();
 
     const filtered = stockoutsData.filter((item) => {
-          const seletedmaterialtype=selectedmaterial.toLowerCase();
-              const seletedstatustype=selectedstatus.toLowerCase();
+      const seletedmaterialtype = selectedmaterial.toLowerCase();
+      const seletedstatustype = selectedstatus.toLowerCase();
       const nameMatch = item?.material_Name?.name.toLowerCase().includes(lowercased) || item.user?.name.toLowerCase().includes(lowercased);
-           const nameStatus = item?.status.toLowerCase().includes(seletedstatustype);
-              const typeMatch = item?.material_Name?.type.toLowerCase().includes(seletedmaterialtype);
+      const nameStatus = item?.status.toLowerCase().includes(seletedstatustype);
+      const typeMatch = item?.material_Name?.type.toLowerCase().includes(seletedmaterialtype);
       const date = new Date(item.date);
       const dateMatch =
         (!startDate || date >= startDate) && (!endDate || date <= endDate);
 
       return nameMatch && dateMatch && typeMatch && nameStatus;
     });
-   
+
     setFilteredData(filtered);
     setCurrentPage(1);
-  }, [search, startDate, endDate, stockoutsData,selectedmaterial,selectedstatus]);
+  }, [search, startDate, endDate, stockoutsData, selectedmaterial, selectedstatus]);
 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleAddStockOutward = () => {
     navigate('/dashboard/add-stock-outward');
   };
-  const handedropchnage=(e)=>{
-    const selected=e.target.value;
-    console.log("selected",selected);
-setselectedmaterial(selected)
-}
-  const handedropstatuschnage=(e)=>{
-    const selected=e.target.value;
-    console.log("selected",selected);
-setselectedstatus(selected)
-}
-const handleEditRequest = async (id) => {
-  try {
-
-
-    const response = await markEDITREQUEST(id)
-
-    if (response.status === 200) {
-      alert("Edit request sent successfully!");
-      fetchStockOutward(); // Refresh data
-    }
-  } catch (error) {
-    console.error("Edit request error:", error);
-    alert("Failed to send edit request.");
+  const handedropchnage = (e) => {
+    const selected = e.target.value;
+    console.log("selected", selected);
+    setselectedmaterial(selected)
   }
-};
-const handleMarkAsDone = async (id) => {
-  try {
-
-    const res = await markStockOutwardAsDone(id);
-
-    if (res.status === 200) {
-      alert("Marked as done!");
-      fetchStockOutward(); // Refresh data after update
-    }
-  } catch (error) {
-    console.error("Error marking as done:", error);
-    alert("Failed to mark as done.");
+  const handedropstatuschnage = (e) => {
+    const selected = e.target.value;
+    console.log("selected", selected);
+    setselectedstatus(selected)
   }
-};
-const handleApproveEditRequest = async (id) => {
-  try {
+  const handleEditRequest = async (id) => {
+    try {
 
-    const res = await markappovededitrequest(id);
 
-    if (res.status === 200) {
-      alert("Marked as done!");
-      fetchStockOutward(); // Refresh data after update
+      const response = await markEDITREQUEST(id)
+
+      if (response.status === 200) {
+        alert("Edit request sent successfully!");
+        fetchStockOutward();
+      }
+    } catch (error) {
+      console.error("Edit request error:", error);
+      alert("Failed to send edit request.");
     }
-  } catch (error) {
-    console.error("Error marking as done:", error);
-    alert("Failed to mark as done.");
-  }
-};
+  };
+  const handleMarkAsDone = async (id) => {
+    try {
+
+      const res = await markStockOutwardAsDone(id);
+
+      if (res.status === 200) {
+        alert("Marked as done!");
+        fetchStockOutward();
+      }
+    } catch (error) {
+      console.error("Error marking as done:", error);
+      alert("Failed to mark as done.");
+    }
+  };
+  const handleApproveEditRequest = async (id) => {
+    try {
+
+      const res = await markappovededitrequest(id);
+
+      if (res.status === 200) {
+        alert("Marked as done!");
+        fetchStockOutward();
+      }
+    } catch (error) {
+      console.error("Error marking as done:", error);
+      alert("Failed to mark as done.");
+    }
+  };
   return (
     <Container className="mt-4">
       <Card>
@@ -158,7 +169,7 @@ const handleApproveEditRequest = async (id) => {
         </Card.Header>
 
         <Card.Body>
-          {/* Filter Inputs */}
+
           <div className="d-flex flex-wrap gap-3 mb-3 align-items-center">
             <Form.Control
               type="text"
@@ -167,18 +178,18 @@ const handleApproveEditRequest = async (id) => {
               onChange={(e) => setSearch(e.target.value)}
               style={{ maxWidth: '400px' }}
             />
-                  <Form.Select aria-label="Default select example "       style={{ maxWidth: '300px' }} onChange={(e)=>handedropchnage(e)} >
-                  <option>Select The Type</option>
-                  <option value="raw material">Raw Material</option>
-                  <option value="ready material">Ready Material</option>
-                
-                </Form.Select>
-                    <Form.Select aria-label="Default select example "       style={{ maxWidth: '300px' }} onChange={(e)=>handedropstatuschnage(e)} >
-                  <option>Select The Status Type</option>
-                  <option value="done">Done</option>
-                  <option value="pending">Pending</option>
-                
-                </Form.Select>
+            <Form.Select aria-label="Default select example " style={{ maxWidth: '300px' }} onChange={(e) => handedropchnage(e)} >
+              <option>Select The Type</option>
+              <option value="raw material">Raw Material</option>
+              <option value="ready material">Ready Material</option>
+
+            </Form.Select>
+            <Form.Select aria-label="Default select example " style={{ maxWidth: '300px' }} onChange={(e) => handedropstatuschnage(e)} >
+              <option>Select The Status Type</option>
+              <option value="done">Done</option>
+              <option value="pending">Pending</option>
+
+            </Form.Select>
 
             <DatePicker
               selected={startDate}
@@ -209,7 +220,7 @@ const handleApproveEditRequest = async (id) => {
             </Button>
           </div>
 
-          {/* Data Table */}
+
           <Table responsive bordered hover>
             <thead className="table-dark">
               <tr>
@@ -218,7 +229,7 @@ const handleApproveEditRequest = async (id) => {
                 <th>Quantity Used</th>
                 <th>Date</th>
                 <th>Purpose</th>
-                  <th>Invoice</th>
+                <th>Invoice</th>
                 <th>User</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -236,74 +247,74 @@ const handleApproveEditRequest = async (id) => {
                   <tr key={index}>
                     <td>{indexOfFirstRow + index + 1}</td>
                     <td>{item?.material_Name?.name || "N/A"}</td>
-                    <td>{item?.quantity_used  || "N/A"}</td>
+                    <td>{item?.quantity_used || "N/A"}</td>
                     <td>{formatDate(item.date) || "N/A"}</td>
                     <td>{item?.purpose || 'N/A'}</td>
-                   <td>
-  {item?.file?.type?.startsWith('image/') ? (
-    // Show small clickable image preview
-    <a href={`${BASE_URL}${item.file.url}`}  target="_blank" rel="noreferrer">
-      <img 
-        src={`${BASE_URL}${item.file.url}`} 
-        alt="preview" 
-        style={{ width: '50px', height: 'auto', cursor: 'pointer' }} 
-      />
-    </a>
-  ) : item?.file?.type === 'application/pdf' ? (
-    // Show clickable PDF link
-    <a href={`${BASE_URL}${item.file.url}`}  target="_blank" rel="noreferrer">
-      📄 View PDF
-    </a>
-  ) : (
-    // If no file or unknown type
-    'N/A'
-  )}
-</td>
+                    <td>
+                      {item?.file?.type?.startsWith('image/') ? (
+                        // Show small clickable image preview
+                        <a href={`${BASE_URL}${item.file.url}`} target="_blank" rel="noreferrer">
+                          <img
+                            src={`${BASE_URL}${item.file.url}`}
+                            alt="preview"
+                            style={{ width: '50px', height: 'auto', cursor: 'pointer' }}
+                          />
+                        </a>
+                      ) : item?.file?.type === 'application/pdf' ? (
+                        // Show clickable PDF link
+                        <a href={`${BASE_URL}${item.file.url}`} target="_blank" rel="noreferrer">
+                          📄 View PDF
+                        </a>
+                      ) : (
+                        // If no file or unknown type
+                        'N/A'
+                      )}
+                    </td>
 
                     <td>{item.user?.name || 'N/A'}</td>
-                                <td>{item.status || 'N/A'}</td>
-            <td>
+                    <td>{item.status || 'N/A'}</td>
+                    <td>
 
 
-  {userRole === 'admin' && item.status === 'pending' && (
-    <>
-      <Button
-        variant="info"
-        size="sm"
-        className="me-2"
-        onClick={() => navigate(`/dashboard/edit-stock-outward/${item._id}`)}
-      >
-        Edit
-      </Button>
+                      {userRole === 'admin' && item.status === 'pending' && (
+                        <>
+                          <Button
+                            variant="info"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => navigate(`/dashboard/edit-stock-outward/${item._id}`)}
+                          >
+                            Edit
+                          </Button>
 
-      <Button
-        variant="success"
-        size="sm"
-        onClick={() => handleMarkAsDone(item._id)}
-      >
-        Done
-      </Button>
-    </>
-  )}
-    {userRole === 'admin' && item.status === 'done' && (
-    <Button
-      variant="warning"
-      size="sm"
-      onClick={() => handleEditRequest(item._id)}
-    >
-      Request Edit
-    </Button>
-  )}
-   {userRole === 'supervisior' && item.status === 'pending-approved' && (
-    <Button
-      variant="success"
-      size="sm"
-      onClick={() => handleApproveEditRequest(item._id)}
-    >
-      Approve Edit Request
-    </Button>
-  )}
-</td>
+                          <Button
+                            variant="success"
+                            size="sm"
+                            onClick={() => handleMarkAsDone(item._id)}
+                          >
+                            Done
+                          </Button>
+                        </>
+                      )}
+                      {userRole === 'admin' && item.status === 'done' && (
+                        <Button
+                          variant="warning"
+                          size="sm"
+                          onClick={() => handleEditRequest(item._id)}
+                        >
+                          Request Edit
+                        </Button>
+                      )}
+                      {userRole === 'supervisior' && item.status === 'pending-approved' && (
+                        <Button
+                          variant="success"
+                          size="sm"
+                          onClick={() => handleApproveEditRequest(item._id)}
+                        >
+                          Approve Edit Request
+                        </Button>
+                      )}
+                    </td>
 
 
                   </tr>

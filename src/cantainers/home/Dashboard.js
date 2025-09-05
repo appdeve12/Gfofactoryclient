@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { checkmaterial, dashboardstats, getallMaterialName, updateLimit } from '../../services/allService';
+import { checkmaterial, checkstatus, dashboardstats, getallMaterialName, updateLimit } from '../../services/allService';
 import {
   Table,
   Container,
@@ -171,6 +171,26 @@ const fetchcheckorderplaced = async () => {
 useEffect(() => {
   fetchcheckorderplaced();
 }, []);
+
+  const checkBlockStatus = async () => {
+    try {
+      const response=await checkstatus()
+    
+      if (response.status === 200 && response.data.blocked) {
+       
+        localStorage.clear(); // clear auth info
+        navigate('/'); // redirect to login
+      }
+    } catch (err) {
+      console.error('Error checking block status', err);
+    }
+  };
+
+  useEffect(() => {
+    checkBlockStatus(); // initial check
+    const interval = setInterval(checkBlockStatus, 5000); // poll every 5s
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Container className="mt-4">

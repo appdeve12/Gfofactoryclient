@@ -5,6 +5,7 @@ export const API_ROUTES = {
   LOGIN: '/api/users/login',
 
   REGISTER: '/api/users/register',
+  CHECK_BLOCKED:"/api/users/checkblockedstatus",
   VIEW_ALL_ADMINS:"/api/users/alladmin",
   BLOCKED_UNBLOCKED_ADMIN:"/api/users/toggle-block",
   RESET_PASSWORD:"/api/users/reset-password",

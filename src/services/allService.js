@@ -120,3 +120,6 @@ export const getorderplacedtomartivulrID=(id)=>{
 export const allorder=()=>{
   return axiosInstance.get(`${API_ROUTES.ALL_ORDER}`)
 }
+export const checkstatus=()=>{
+  return axiosInstance.get(API_ROUTES.CHECK_BLOCKED)
+}

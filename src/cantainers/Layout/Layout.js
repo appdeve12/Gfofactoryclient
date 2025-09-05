@@ -101,7 +101,7 @@ const Header = ({ toggleSidebar, userData }) => {
 
 
 
-const Sidebar = ({ collapsed ,userData}) => (
+const Sidebar = ({ collapsed, userData }) => (
   <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
     <Nav className="flex-column">
       <Nav.Link as={Link} to="/dashboard">
@@ -110,26 +110,26 @@ const Sidebar = ({ collapsed ,userData}) => (
       </Nav.Link>
       <Nav.Link as={Link} to="materialdata">
         <FaArrowDown className="sidebar-icon" />
-        {!collapsed && <span className="sidebar-label">Material Name</span>}
+        {!collapsed && <span className="sidebar-label">Material Data</span>}
       </Nav.Link>
       <Nav.Link as={Link} to="stock-inward">
         <FaArrowDown className="sidebar-icon" />
-        {!collapsed && <span className="sidebar-label">Stock In</span>}
+        {!collapsed && <span className="sidebar-label">Stock Inward</span>}
       </Nav.Link>
       <Nav.Link as={Link} to="stock-outward">
         <FaArrowUp className="sidebar-icon" />
-        {!collapsed && <span className="sidebar-label">Stock Out</span>}
+        {!collapsed && <span className="sidebar-label">Stock Outward</span>}
       </Nav.Link>
-     
-  <Nav.Link as={Link} to="material-cost">
-    <FaArrowUp className="sidebar-icon" />
-    {!collapsed && <span className="sidebar-label">Material Cost</span>}
-  </Nav.Link>
-     
-  <Nav.Link as={Link} to="all-order">
-    <FaArrowUp className="sidebar-icon" />
-    {!collapsed && <span className="sidebar-label">Orders</span>}
-  </Nav.Link>
+
+      <Nav.Link as={Link} to="material-cost">
+        <FaArrowUp className="sidebar-icon" />
+        {!collapsed && <span className="sidebar-label">Material Cost</span>}
+      </Nav.Link>
+
+      <Nav.Link as={Link} to="all-order">
+        <FaArrowUp className="sidebar-icon" />
+        {!collapsed && <span className="sidebar-label">Orders</span>}
+      </Nav.Link>
 
 
     </Nav>
