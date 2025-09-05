@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
 const navigate = useNavigate();
-
+const [buttondisabled,setbuttondisabled]=useState(false)
   const { materialId } = useParams();
   const [material, setMaterial] = useState(null);
   const [history, setHistory] = useState([]);
@@ -70,6 +70,7 @@ useEffect(() => {
 
 
   const handleSubmit = async () => {
+    setbuttondisabled(true)
     try {
       const res = await markplaceOrder({
     materialId,
@@ -78,6 +79,7 @@ useEffect(() => {
 
       if (res.data.success) {
         toast.success("Order placed and email sent!");
+          setbuttondisabled(false)
         setShowModal(false);
         setFormData({ quantity: "", cost: "", gstNumber: "", remarks: "" });
       }
@@ -282,8 +284,8 @@ useEffect(() => {
     </Form>
   </Modal.Body>
   <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowModal(false)}>Cancel</Button>
-    <Button variant="primary" onClick={handleSubmit}>Submit & Send Email</Button>
+    <Button variant="secondary" onClick={() => setShowModal(false)} disabled={buttondisabled}>Cancel</Button>
+    <Button variant="primary" onClick={handleSubmit} disabled={buttondisabled}>Submit & Send Email</Button>
   </Modal.Footer>
 </Modal>
 

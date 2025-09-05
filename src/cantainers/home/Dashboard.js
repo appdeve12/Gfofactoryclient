@@ -172,25 +172,25 @@ useEffect(() => {
   fetchcheckorderplaced();
 }, []);
 
-  const checkBlockStatus = async () => {
-    try {
-      const response=await checkstatus()
+  // const checkBlockStatus = async () => {
+  //   try {
+  //     const response=await checkstatus()
     
-      if (response.status === 200 && response.data.blocked) {
+  //     if (response.status === 200 && response.data.blocked) {
        
-        localStorage.clear(); // clear auth info
-        navigate('/'); // redirect to login
-      }
-    } catch (err) {
-      console.error('Error checking block status', err);
-    }
-  };
+  //       localStorage.clear(); // clear auth info
+  //       navigate('/'); // redirect to login
+  //     }
+  //   } catch (err) {
+  //     console.error('Error checking block status', err);
+  //   }
+  // };
 
-  useEffect(() => {
-    checkBlockStatus(); // initial check
-    const interval = setInterval(checkBlockStatus, 5000); // poll every 5s
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   checkBlockStatus(); // initial check
+  //   const interval = setInterval(checkBlockStatus, 5000); // poll every 5s
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <Container className="mt-4">
@@ -232,67 +232,88 @@ useEffect(() => {
                 <th>Total Stock Out</th>
                 <th>Current Stock</th>
                 <th>Limit</th>
-        {userDt.user.role=="supervisior" &&  <th>Action</th>} 
+             {userDt.user.role=="supervisior" && <th>Action</th>}
                {userDt.user.role=="supervisior" ?  <th>Placed Order</th>:<th>Placed Order</th>} 
                 
               </tr>
             </thead>
 <tbody>
-  {currentRows.length === 0 ? (
-    <tr>
-      <td colSpan="7" className="text-center">
-        No records found.
-      </td>
-    </tr>
-  ) : (
-    currentRows.map((item, index) => {
-      const isExceed = item.current_stock <= item.limit; // check per row
-      return (
-     <tr
-    key={index}
-    className={isExceed ? "stock-exceed" : ""}
-
-  >
-    <td>{indexOfFirstRow + index + 1}</td>
-    <td>{item.material_Name}</td>
-    <td>{item.total_stock_in}</td>
-    <td>{item.total_stock_out}</td>
-    <td>{item.current_stock}</td>
-    <td>{item.limit}</td>
-    
-    {userDt.user.role === "supervisior" && (
-      <td>
-        {item.limit ? (
-          <Button onClick={() => addoreditmodelopen(item)}>Edit Limit</Button>
-        ) : (
-          <Button onClick={() => addoreditmodelopen(item)}>Add Limit</Button>
-        )}
-      </td>
-    )}
-
-<td>
-  {isExceed ? (
-    item.isOrdered ? (
-      <Button variant="success" onClick={() => handlevieworderwhomtoplaced(item)}>
-        Order Placed
-      </Button>
-    ) : (
-      <Button variant="warning" onClick={() => handleOrderToPlace(item)}>
-        Order to Be Placed
-      </Button>
-    )
-  ) : (
-    <Button variant="secondary" disabled>
-      Stock is Sufficient
-    </Button>
-  )}
-</td>
-
-
+{currentRows.length === 0 ? (
+  <tr>
+    <td colSpan="7" className="text-center">
+      No records found.
+    </td>
   </tr>
-      );
-    })
-  )}
+) : (
+  currentRows.map((item, index) => {
+    console.log(item.current_stock, item.limit);
+
+    // अगर limit खाली है तो 0 मान लो
+    if (item.limit === "") {
+      item.limit = 0;
+    }
+
+    const isExceed = item.current_stock < item.limit;
+
+    return (
+      <tr
+        key={index}
+        className={isExceed ? "stock-exceed" : ""}
+      >
+        <td>{indexOfFirstRow + index + 1}</td>
+        <td>{item.material_name}</td>
+        <td>{item.total_stock_in}</td>
+        <td>{item.total_stock_out}</td>
+        <td>{item.current_stock}</td>
+        <td>{item.limit || 0}</td>
+
+        {/* ✅ Add/Edit Limit केवल supervisor और admin को दिखे */}
+        {(userDt.user.role === "supervisior" ) && (
+          <td>
+            {item.limit ? (
+              <Button onClick={() => addoreditmodelopen(item)}>Edit Limit</Button>
+            ) : (
+              <Button onClick={() => addoreditmodelopen(item)}>Add Limit</Button>
+            )}
+          </td>
+        )}
+
+        {/* ✅ Stock Status सभी roles में दिखे */}
+        <td>
+          {item.total_stock_in === 0 &&
+          item.total_stock_out === 0 &&
+          item.current_stock === 0 &&
+          (item.limit === 0 || item.limit === "") ? (
+            <Button variant="danger" disabled>
+              No Stock Available
+            </Button>
+          ) : isExceed ? (
+            item.isOrdered ? (
+              <Button
+                variant="success"
+                onClick={() => handlevieworderwhomtoplaced(item)}
+              >
+                Order Placed
+              </Button>
+            ) : (
+              <Button
+                variant="warning"
+                onClick={() => handleOrderToPlace(item)}
+              >
+                Order to Be Placed
+              </Button>
+            )
+          ) : (
+            <Button variant="secondary" disabled>
+              Stock is Sufficient
+            </Button>
+          )}
+        </td>
+      </tr>
+    );
+  })
+)}
+
 </tbody>
 
           </Table>
