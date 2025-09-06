@@ -56,6 +56,12 @@ const [show,setshow]=useState(false)
     newMaterials[index].quantity_used = value;
     setFormData(prev => ({ ...prev, materials: newMaterials }));
   };
+    const handleQuantityunitChange = (index, value) => {
+    const newMaterials = [...formData.materials];
+    newMaterials[index].quantity_unit = value;
+    setFormData(prev => ({ ...prev, materials: newMaterials }));
+  };
+
 
   // Remove material from the list if needed
   const handleRemoveMaterial = (index) => {
@@ -90,6 +96,7 @@ const [show,setshow]=useState(false)
           material_Name: mat.material_Id, // rename to match schema
           quantity_used: Number(mat.quantity_used), // convert to number
           date: mat.date,
+          quantity_unit:mat.quantity_unit,
           file: mat.file,
           purpose: formData.purpose,
         };
@@ -193,15 +200,22 @@ const handleClose=()=>{
 
                   <Col md={3}>
                     <Input
+                    required
                       label="Quantity Used"
                       type="number"
                       value={mat.quantity_used}
                       onChange={(e) => handleQuantityChange(index, e.target.value)}
+                        unitInput
+                    unitValue={mat?.quantity_unit || ''}
+             
+                   onUnitChange={(e) => handleQuantityunitChange( index, e.target.value)}
                     />
+                    
                   </Col>
 
                   <Col md={3}>
                     <Input
+                    required
                       label="Date"
                       type="date"
                       value={mat.date}
@@ -210,6 +224,7 @@ const handleClose=()=>{
                   </Col>
                   <Col md={6}>
                     <Input
+                    required
                       label="Upload File"
                       type="file"
                       onChange={(e) => handleFileUpload(index, e)}

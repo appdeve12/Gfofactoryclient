@@ -52,6 +52,9 @@ console.log("data",data)
       setFormData({
         material_Name: data.material_Name._id || '',
         purchase_quantity: data.purchase_quantity || '',
+        purchase_unit:data.purchase_unit || '',
+        cost:data.cost || '',
+        cost_unit:data.cost_unit || '',
         purchase_date: formattedDate,
         supplier: data.supplier || '',
         remarks: data.remarks || '',
@@ -143,16 +146,22 @@ navigate("/dashboard/stock-inward")
 
               <Col md={4}>
                 <Input
+                 required
                   label="Purchase Quantity"
                   type="number"
                   placeholder="Enter purchase quantity"
                   value={formData.purchase_quantity}
+                   unitInput
+                    unitValue={formData?.purchase_unit || ''}
                   onChange={(e) => handleValueChange("purchase_quantity", e.target.value)}
+                   onUnitChange={(e) => handleValueChange( 'purchase_unit', e.target.value)}
                 />
+    
               </Col>
 
               <Col md={4}>
                 <Input
+                 required
                   label="Purchase Date"
                   type="date"
                   placeholder="Select purchase date"
@@ -165,6 +174,7 @@ navigate("/dashboard/stock-inward")
             <Row className="mb-3">
               <Col md={4}>
                 <Input
+                 required
                   label="Supplier"
                   type="text"
                   placeholder="Enter supplier name"
@@ -172,6 +182,19 @@ navigate("/dashboard/stock-inward")
                   onChange={(e) => handleValueChange("supplier", e.target.value)}
                 />
               </Col>
+                   <Col md={4}>
+                <Input
+    required
+    label="Cost"
+    type="number"
+    placeholder="Cost"
+    value={formData?.cost || ''}
+    onChange={(e) => handleValueChange('cost', e.target.value)}
+    unitInput
+    unitValue={formData?.cost_unit || ''}
+    onUnitChange={(e) => handleValueChange( 'cost_unit', e.target.value)}
+  />
+  </Col>
 
               <Col md={4}>
                 <Input
@@ -185,6 +208,7 @@ navigate("/dashboard/stock-inward")
 
               <Col md={4}>
                 <Input
+               
                   label="Upload File"
                   type="file"
                   placeholder="Choose file"

@@ -89,14 +89,16 @@ const AllOrder = () => {
                 <th>Material</th>
                 <th>Type</th>
                 <th>Quantity</th>
-                <th>Cost</th>
+              
                 <th>Supplier</th>
                 <th>Phone</th>
                 <th>GST</th>
                 <th>Billing Address</th>
                 <th>Shipping Address</th>
-                <th>Created By</th>
+             
                 <th>Order Date</th>
+                 <th>Contact Person</th>
+                <th>Company Name</th>
               </tr>
             </thead>
             <tbody>
@@ -106,15 +108,17 @@ const AllOrder = () => {
                     <td>{indexOfFirstRow + index + 1}</td>
                     <td>{order.materialName || "N/A"}</td>
                     <td>{order.materialType || "N/A"}</td>
-                    <td>{order.quantity || "N/A"}</td>
-                    <td>{order.cost || "N/A"}</td>
+                    <td>{order.quantity || "N/A"}{order.quantity_unit || "N/A"}</td>
+                  
                     <td>{order.supplierName || "N/A"}</td>
                     <td>{order.supplierPhone || "N/A"}</td>
                     <td>{order.gstNumber || "N/A"}</td>
                     <td>{order.billingAddress || "N/A"}</td>
                     <td>{order.shippingAddress || "N/A"}</td>
-                    <td>{order.createdBy?.name || "N/A"}</td>
+               
                     <td>{order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A"}</td>
+                       <td>{order.contactperson || "N/A"}</td>
+                    <td>{order.companyname || "N/A"}</td>
                   </tr>
                 ))
               ) : (

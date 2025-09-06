@@ -63,7 +63,7 @@ const OrderPlacedData = () => {
             <th>#</th>
             <th>Supplier Name</th>
             <th>Quantity</th>
-            <th>Cost</th>
+        
             <th>Ordered On</th>
           </tr>
         </thead>
@@ -73,8 +73,8 @@ const OrderPlacedData = () => {
               <tr key={order._id}>
                 <td>{indexOfFirstRow + index + 1}</td>
                 <td>{order.supplierName || "N/A"}</td>
-                <td>{order.quantity || "N/A"}</td>
-                <td>{order.cost || "N/A"}</td>
+                <td>{order.quantity || "N/A"}{order.quantity_unit || "n/a"}</td>
+   
                 <td>
                   {order.createdAt
                     ? new Date(order.createdAt).toLocaleDateString()

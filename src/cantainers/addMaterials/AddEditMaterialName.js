@@ -129,15 +129,22 @@ const handedropchnage=(e)=>{
                                 />
                             </Col>
                              <Col md={4} >
-                                 <Form.Group className="mb-4 position-relative">
-                                   <Form.Label>Type</Form.Label>
-                                <Form.Select aria-label="Default select example " onChange={(e)=>handedropchnage(e)} value={formData.type || ""}>
-      <option>Select The Type</option>
-      <option value="raw material">Raw Material</option>
-      <option value="ready material">Ready Material</option>
-    
-    </Form.Select>
-    </Form.Group>
+          <Form.Group className="mb-4 position-relative">
+  <Form.Label>
+    Type <span style={{ color: "red" }}>*</span>
+  </Form.Label>
+  <Form.Select
+    aria-label="Default select example"
+    onChange={(e) => handedropchnage(e)}
+    value={formData.type || ""}
+    required
+  >
+    <option value="">Select The Type</option>
+    <option value="raw material">Raw Material</option>
+    <option value="ready material">Ready Material</option>
+  </Form.Select>
+</Form.Group>
+
                             </Col>
 
 

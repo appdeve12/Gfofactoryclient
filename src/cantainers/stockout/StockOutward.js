@@ -8,6 +8,7 @@ import {
   Card,
   Form
 } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -18,6 +19,9 @@ const StockOutward = () => {
   const userDt = useSelector(state => state.auth.userdata);
   const userRole = userDt?.user?.role;
   const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
+const [popupItem, setPopupItem] = useState(null);
+const [popupShown, setPopupShown] = useState(false); 
   const [stockoutsData, setStockoutsData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [search, setSearch] = useState('');
@@ -37,6 +41,28 @@ const StockOutward = () => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
+useEffect(() => {
+  if (stockoutsData.length > 0 && !popupShown) {
+    const latestItem = stockoutsData[stockoutsData.length - 1];
+
+    if (latestItem.status === "pending") {
+      setPopupItem(latestItem);
+      setShowPopup(true);
+      setPopupShown(true); // ✅ mark popup as shown
+
+      // 10 minute timer
+      const timer = setTimeout(() => {
+        handleMarkAsDone(latestItem._id); // auto mark done
+        setShowPopup(false);
+      }, 10 * 60 * 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }
+}, [stockoutsData, popupShown]);
+
+
+
 
 
 
@@ -247,7 +273,7 @@ const StockOutward = () => {
                   <tr key={index}>
                     <td>{indexOfFirstRow + index + 1}</td>
                     <td>{item?.material_Name?.name || "N/A"}</td>
-                    <td>{item?.quantity_used || "N/A"}</td>
+                    <td>{item?.quantity_used || "N/A"}{item?.quantity_unit || "N/A"}</td>
                     <td>{formatDate(item.date) || "N/A"}</td>
                     <td>{item?.purpose || 'N/A'}</td>
                     <td>
@@ -277,6 +303,26 @@ const StockOutward = () => {
 
 
                       {userRole === 'admin' && item.status === 'pending' && (
+                        <>
+                          <Button
+                            variant="info"
+                            size="sm"
+                            className="me-2"
+                            onClick={() => navigate(`/dashboard/edit-stock-outward/${item._id}`)}
+                          >
+                            Edit
+                          </Button>
+
+                          <Button
+                            variant="success"
+                            size="sm"
+                            onClick={() => handleMarkAsDone(item._id)}
+                          >
+                            Done
+                          </Button>
+                        </>
+                      )}
+                      {userRole === 'supervisior' && item.status === 'pending' && (
                         <>
                           <Button
                             variant="info"
@@ -337,8 +383,34 @@ const StockOutward = () => {
               ))}
             </Pagination>
           )}
+          
         </Card.Body>
       </Card>
+<Modal show={showPopup} onHide={() => setShowPopup(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Time Alert</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    You only have 10 minutes to edit this material: <b>{popupItem?.material_Name?.name}</b>.  
+    After that, it will automatically be marked as done.
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowPopup(false)}>
+      Close
+    </Button>
+    <Button
+      variant="info"
+      onClick={() => {
+        navigate(`/dashboard/edit-stock-outward/${popupItem?._id}`);
+        setShowPopup(false);
+      }}
+    >
+      Edit
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+
     </Container>
   );
 };

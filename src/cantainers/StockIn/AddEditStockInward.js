@@ -196,17 +196,25 @@ navigate("/dashboard/stock-inward")
                 </Card.Header>
                 <Card.Body>
                   <Row className="mb-3">
+                  <Col md={4}>
+
+  <Input
+    required
+    label="Purchase Quantity"
+    type="number"
+    placeholder="Quantity"
+    value={materialDetails[material]?.purchase_quantity || ''}
+    onChange={(e) => handleInputChange(material, 'purchase_quantity', e.target.value)}
+    unitInput
+    unitValue={materialDetails[material]?.purchase_unit || ''}
+    onUnitChange={(e) => handleInputChange(material, 'purchase_unit', e.target.value)}
+  />
+
+
+</Col>
                     <Col md={4}>
                       <Input
-                        label="Purchase Quantity"
-                        type="number"
-                        placeholder="Quantity"
-                        value={materialDetails[material]?.purchase_quantity || ''}
-                        onChange={(e) => handleInputChange(material, 'purchase_quantity', e.target.value)}
-                      />
-                    </Col>
-                    <Col md={4}>
-                      <Input
+                             required
                         label="Purchase Date"
                         type="date"
                         value={materialDetails[material]?.purchase_date || ''}
@@ -215,20 +223,26 @@ navigate("/dashboard/stock-inward")
                     </Col>
                     <Col md={4}>
                       <Input
+                             required
                         label="Supplier"
                         type="text"
                         value={materialDetails[material]?.supplier || ''}
                         onChange={(e) => handleInputChange(material, 'supplier', e.target.value)}
                       />
                     </Col>
-                       <Col md={4}>
-                      <Input
-                        label="Cost"
-                        type="text"
-                        value={materialDetails[material]?.cost || ''}
-                        onChange={(e) => handleInputChange(material, 'cost', e.target.value)}
-                      />
-                    </Col>
+                    <Col md={4}>
+  <Input
+    required
+    label="Cost"
+    type="number"
+    placeholder="Cost"
+    value={materialDetails[material]?.cost || ''}
+    onChange={(e) => handleInputChange(material, 'cost', e.target.value)}
+    unitInput
+    unitValue={materialDetails[material]?.cost_unit || ''}
+    onUnitChange={(e) => handleInputChange(material, 'cost_unit', e.target.value)}
+  />
+</Col>
                   </Row>
 
                   <Row className="mb-3">
@@ -242,6 +256,7 @@ navigate("/dashboard/stock-inward")
                     </Col>
                     <Col md={6}>
                       <Input
+                      required
                         label="Upload File"
                         type="file"
                         onChange={(e) => handleFileUpload(material, e)}

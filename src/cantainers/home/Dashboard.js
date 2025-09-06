@@ -59,6 +59,7 @@ const [placedMaterialIds, setPlacedMaterialIds] = useState([]);
           current_stock: item.current_stock,
           type:item.type,
           limit:item.limit,
+          limit_unit:item.limit_unit,
           isOrdered:item.isOrdered,
           ...item
         }));
@@ -68,7 +69,9 @@ const [placedMaterialIds, setPlacedMaterialIds] = useState([]);
            "Total Stock Out":  item.total_stock_out,
              "Current Stock":  item.current_stock, 
              "type":item.type,
-             "limit":item.limit
+             "limit":item.limit,
+             "limit_unit":item.limit_unit
+             
      }))
          // ✅ Check if any stock is below limit
       const isExceed = formattedData.some(item => item.current_stock >= item.limit);
@@ -91,7 +94,8 @@ setexceldata(customHeadings)
       const response = await getallMaterialName();
       if (response.status === 200) {
         const data = response.data || [];
-dispatch(storeallmaterial(data))
+               const updateMaterial=data.filter((item,index)=>item.isActive==true)
+dispatch(storeallmaterial(updateMaterial))
       }
     } catch (error) {
       console.error('Error fetching stock inward data:', error);
@@ -253,7 +257,7 @@ useEffect(() => {
       item.limit = 0;
     }
 
-    const isExceed = item.current_stock < item.limit;
+    const isExceed = item.current_stock.total < item.limit;
 
     return (
       <tr
@@ -262,10 +266,10 @@ useEffect(() => {
       >
         <td>{indexOfFirstRow + index + 1}</td>
         <td>{item.material_name}</td>
-        <td>{item.total_stock_in}</td>
-        <td>{item.total_stock_out}</td>
-        <td>{item.current_stock}</td>
-        <td>{item.limit || 0}</td>
+        <td>{item.total_stock_in.total}{item.total_stock_in.unit}</td>
+        <td>{item.total_stock_out.total}{item.total_stock_out.unit}</td>
+        <td>{item.current_stock.total}{item.current_stock.unit}</td>
+        <td>{item.limit || 0}{item.limit_unit || ""}</td>
 
         {/* ✅ Add/Edit Limit केवल supervisor और admin को दिखे */}
         {(userDt.user.role === "supervisior" ) && (

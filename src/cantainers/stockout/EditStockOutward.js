@@ -32,6 +32,7 @@ const EditStockOutward = () => {
           setFormData({
             material_Id: data.material_Name._id,
             quantity_used: data.quantity_used,
+            quantity_unit:data.quantity_unit,
             purpose: data.purpose,
             date: data.date.split("T")[0],
             file: data.file || {}
@@ -50,6 +51,11 @@ const EditStockOutward = () => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
+  const handlequantityunitChange=(field,value)=>{
+      debugger;
+  
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
@@ -79,7 +85,8 @@ const EditStockOutward = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.quantity_used || !formData.purpose) {
+    debugger;
+    if (!formData.quantity_used ) {
       toast.error("Please fill all required fields.");
       return;
     }
@@ -88,6 +95,7 @@ const EditStockOutward = () => {
       const payload = {
         material_Name: formData.material_Id,
         quantity_used: Number(formData.quantity_used),
+        quantity_unit:formData.quantity_unit,
         purpose: formData.purpose,
         date: formData.date,
         file: formData.file
@@ -128,16 +136,24 @@ console.log("res",res)
             <Row className="mb-3">
               <Col md={6}>
                 <Input
+                required
                   label="Quantity Used"
                   type="number"
                   name="quantity_used"
                   value={formData.quantity_used}
                   onChange={handleChange}
+                    unitInput
+                    unitValue={formData?.quantity_unit || ''}
+                  
+                   onUnitChange={(e)=>handlequantityunitChange("quantity_unit",e.target.value)}
                 />
+                  
+    
               </Col>
 
               <Col md={6}>
                 <Input
+                   required
                   label="Date"
                   type="date"
                   name="date"

@@ -26,12 +26,17 @@ const LimitModal = ({handleClose,handleConfirm,openModel,limitdata=null}) => {
         </Modal.Header>
         <Modal.Body>
              <Input
+             required
               label="Enter New Limit"
               type="text"
               placeholder="Enter New Limit"
               value={formData.limit}
               onChange={(e) => handlevalueChange("limit", e.target.value)}
+                unitInput
+    unitValue={formData.limit_unit || ''}
+    onUnitChange={(e) => handlevalueChange('limit_unit', e.target.value)}
             />
+        
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

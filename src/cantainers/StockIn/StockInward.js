@@ -5,7 +5,8 @@ import {
   Container,
   Pagination,
   Card,
-  Form
+  Form,
+  Modal
 } from 'react-bootstrap';
 import { deleteparticularstockinward, getallstockinwards, getMaterialsForSupervisor, makeeditrequies, markasdone, supervisiorappredrequest } from '../../services/allService';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +22,9 @@ const StockInward = () => {
   const navigate = useNavigate();
   const userDt = useSelector(state => state.auth.userdata);
   const userRole = userDt?.user?.role;
+const [showPopup, setShowPopup] = useState(false);
+const [popupItem, setPopupItem] = useState(null);
+const [popupShown, setPopupShown] = useState(false); // ✅ सिर्फ एक बार show करने के लिए flag
 
   const [stockInwardData, setStockInwardData] = useState([]);
   const [selectedmaterial, setselectedmaterial] = useState("")
@@ -70,6 +74,26 @@ const StockInward = () => {
 
     return () => clearInterval(interval); // cleanup on unmount
   }, []);
+useEffect(() => {
+  if (stockInwardData.length > 0 && !popupShown) {
+    // latest added record
+    const latestItem = stockInwardData[stockInwardData.length - 1];
+
+    if (latestItem.status === "pending") {
+      setPopupItem(latestItem);
+      setShowPopup(true);
+      setPopupShown(true); // ✅ popup सिर्फ ek bar show hoga
+
+      // 10 minute timer
+      const timer = setTimeout(() => {
+        markdone(latestItem._id); // auto mark done
+        setShowPopup(false);
+      }, 10 * 60 * 1000); // 10 minutes in ms
+
+      return () => clearTimeout(timer);
+    }
+  }
+}, [stockInwardData, popupShown]);
 
   // Filter by search + date
   useEffect(() => {
@@ -245,6 +269,7 @@ const StockInward = () => {
                 <th>#</th>
                 <th>Material Name</th>
                 <th>Purchase Quantity</th>
+                     <th>Cost</th>
                 <th>Purchase Date</th>
                 <th>Supplier</th>
                 <th>Remarks</th>
@@ -262,7 +287,8 @@ const StockInward = () => {
                 <tr key={index} onClick={() => clickonparticlurrow(item)}>
   <td>{indexOfFirstRow + index + 1}</td>
   <td>{item?.material_Name?.name || ""}</td>
-  <td>{item?.purchase_quantity || 'N/A'}</td>
+  <td>{item?.purchase_quantity || 'N/A'}{item?.purchase_unit || 'N/A'}</td>
+    <td>{item?.cost || 'N/A'}{item?.cost_unit || 'N/A'}</td>
   <td>{formatDate(item?.purchase_date) || 'N/A'}</td>
   <td>{item?.supplier || 'N/A'}</td>
   <td>{item?.remarks || 'N/A'}</td>
@@ -398,6 +424,30 @@ const StockInward = () => {
           handleConfirm={handleConfirmDelete}
         />
       )}
+      <Modal show={showPopup} onHide={() => setShowPopup(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>Time Alert</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    You only have 10 minutes to edit this material: <b>{popupItem?.material_Name?.name}</b>.  
+    After that, it will automatically be marked as done.
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowPopup(false)}>
+      Close
+    </Button>
+    <Button
+      variant="info"
+      onClick={() => {
+        navigate(`/dashboard/edit-stock-inward/${popupItem?._id}`);
+        setShowPopup(false);
+      }}
+    >
+      Edit
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </Container>
   );
 };

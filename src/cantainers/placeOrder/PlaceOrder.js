@@ -4,6 +4,7 @@ import { Table, Card, Button, Modal, Form ,Row,Col,Container} from "react-bootst
 import { getMaterialHistory, markplaceOrder } from "../../services/allService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import Input from "../../components/common/Input";
 
 const PlaceOrder = () => {
 const navigate = useNavigate();
@@ -36,6 +37,13 @@ const handleChange = (e) => {
   setFormData((prev) => ({
     ...prev,
     [name]: value,
+  }));
+};
+const handleInputChange = (filed,value) => {
+  
+  setFormData((prev) => ({
+    ...prev,
+    [filed]: value,
   }));
 };
 
@@ -78,12 +86,14 @@ useEffect(() => {
       });
 
       if (res.data.success) {
+        navigate("/dashboard")
         toast.success("Order placed and email sent!");
           setbuttondisabled(false)
         setShowModal(false);
         setFormData({ quantity: "", cost: "", gstNumber: "", remarks: "" });
       }
     } catch (err) {
+         setbuttondisabled(false)
       toast.error("Error placing order");
       console.error(err);
     }
@@ -159,15 +169,15 @@ useEffect(() => {
       <Row className="mb-3">
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Supplier Name</Form.Label>
-            <Form.Control type="text" name="supplierName"     value={formData.supplierName}
+            <Form.Label>Supplier Name <span style={{ color: "red" }}>*</span></Form.Label>
+            <Form.Control type="text" name="supplierName"  required   value={formData.supplierName}
               onChange={handleChange}  />
           </Form.Group>
         </Col>
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Email</Form.Label>
-            <Form.Control type="email" name="supplierEmail"   value={formData.supplierEmail}
+            <Form.Label>Email <span style={{ color: "red" }}>*</span></Form.Label>
+            <Form.Control type="email" name="supplierEmail" required  value={formData.supplierEmail}
               onChange={handleChange} />
           </Form.Group>
         </Col>
@@ -176,20 +186,21 @@ useEffect(() => {
       <Row className="mb-3">
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Phone</Form.Label>
-            <Form.Control type="text" name="supplierPhone"    value={formData.supplierPhone}
+            <Form.Label>Phone <span style={{ color: "red" }}>*</span></Form.Label>
+            <Form.Control type="text" name="supplierPhone" required   value={formData.supplierPhone}
               onChange={handleChange}  />
           </Form.Group>
         </Col>
         <Col md={6}>
           <Form.Group>
-            <Form.Label>GST Number</Form.Label>
+            <Form.Label>GST Number <span style={{ color: "red" }}>*</span></Form.Label>
             <Form.Control
               type="text"
+              required
               name="gstNumber"
               value={formData.gstNumber}
               onChange={handleChange}
-              required
+           
             />
           </Form.Group>
         </Col>
@@ -199,13 +210,13 @@ useEffect(() => {
       <Row className="mb-3">
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Material Name</Form.Label>
-            <Form.Control type="text" value={material?.name || ""} readOnly />
+            <Form.Label>Material Name <span style={{ color: "red" }}>*</span></Form.Label>
+            <Form.Control type="text"  value={material?.name || ""} readOnly />
           </Form.Group>
         </Col>
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Material Type</Form.Label>
+            <Form.Label>Material Type <span style={{ color: "red" }}>*</span></Form.Label>
             <Form.Control type="text" value={material?.type || ""} readOnly />
           </Form.Group>
         </Col>
@@ -213,25 +224,29 @@ useEffect(() => {
 
       <Row className="mb-3">
         <Col md={6}>
-          <Form.Group>
-            <Form.Label>Quantity</Form.Label>
-            <Form.Control
-              type="number"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+          
+            <Input
+    required
+    label=" Quantity"
+    type="number"
+    name="quantity"
+    placeholder="Quantity"
+     value={formData.quantity}
+ onChange={handleChange}
+    unitInput
+    unitValue={formData?.quantity_unit || ''}
+    onUnitChange={(e) => handleInputChange( 'quantity_unit', e.target.value)}
+  />
         </Col>
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Cost</Form.Label>
+            <Form.Label>Company Name <span style={{ color: "red" }}>*</span></Form.Label>
             <Form.Control
               type="text"
-              name="cost"
-              value={formData.cost}
+              name="companyname"
+              value={formData.companyname}
               onChange={handleChange}
+              required
             />
           </Form.Group>
         </Col>
@@ -241,25 +256,27 @@ useEffect(() => {
       <Row className="mb-3">
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Billing Address</Form.Label>
+            <Form.Label>Billing Address <span style={{ color: "red" }}>*</span></Form.Label>
             <Form.Control
               as="textarea"
               rows={2}
               value={formData?.billingAddress || ""}
           name="billingAddress"
             onChange={handleChange}
+            required
             />
           </Form.Group>
         </Col>
         <Col md={6}>
           <Form.Group>
-            <Form.Label>Shipping Address</Form.Label>
+            <Form.Label>Shipping Address <span style={{ color: "red" }}>*</span></Form.Label>
             <Form.Control
               as="textarea"
               rows={2}
               value={formData?.shippingAddress || ""}
          name="shippingAddress"
            onChange={handleChange}
+           required
 
             />
           </Form.Group>
@@ -268,7 +285,7 @@ useEffect(() => {
 
       {/* Remarks */}
       <Row>
-        <Col md={12}>
+        <Col md={6}>
           <Form.Group>
             <Form.Label>Remarks</Form.Label>
             <Form.Control
@@ -280,6 +297,18 @@ useEffect(() => {
             />
           </Form.Group>
         </Col>
+           <Col md={6}>
+          <Form.Group>
+            <Form.Label>Contact Person <span style={{ color: "red" }}>*</span></Form.Label>
+            <Form.Control
+              type="text"
+              name="cost"
+              value={formData.contactperson}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+          </Col>
       </Row>
     </Form>
   </Modal.Body>

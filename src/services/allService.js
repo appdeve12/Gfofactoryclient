@@ -14,6 +14,10 @@ export const viewalladmindata = () => {
 export const blockedunblocked=(id,data)=>{
 return axiosInstance.post(`${API_ROUTES.BLOCKED_UNBLOCKED_ADMIN}/${id}`,data)
 }
+export const activeinactivem=(id,data)=>{
+return axiosInstance.post(`${API_ROUTES.ACTIVE_INACTIVE_MATERIAL_DATA}/${id}`,data)
+}
+
 export const resetpasswordadmin=(data)=>{
   return axiosInstance.post(API_ROUTES.RESET_PASSWORD,data)
 }
@@ -40,7 +44,9 @@ return axiosInstance.put(`${API_ROUTES.UPDATE_PARTICULR_STOCK_INWARD}/${id}`,for
 export const deleteparticularstockinward=(id)=>{
 return axiosInstance.delete(`${API_ROUTES.DELETE_PARTICULAR_STOCK_INWARD}/${id}`)
 }
-
+export const deletematerialname=(id)=>{
+return axiosInstance.delete(`${API_ROUTES.DELETE_MATERIAL_NAME}/${id}`)
+}
 export const addstockoutward=(data)=>{
   return axiosInstance.post(API_ROUTES.CREATE_STOCK_OUTWARD,data)
 };

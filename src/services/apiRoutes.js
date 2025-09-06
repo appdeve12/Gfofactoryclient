@@ -41,6 +41,7 @@ DASHBOARD_STATS:"/api/stock/autostock",
   DELETE_PARTICULAR_MATERIALDATA:"/api/materialsname",
   UPDATE_PARTICULR_MATERIALDATA:"/api/materialsname",
   UPDATE_MATERIAL_LIMIT:"/api/materialsname/",
+  ACTIVE_INACTIVE_MATERIAL_DATA:"/api/materialsname/toggle-active",
 
   //ADMIN Mark As Done (Admin)
   MARK_AS_DONE:"/api/materials/done",

@@ -91,8 +91,8 @@ setSearch(materialName)
                     ? new Date(item.purchase_date).toLocaleDateString()
                     : "N/A"}
                 </td>
-                <td>{item.purchase_quantity || "N/A"}</td>
-                        <td>{item.cost || "N/A"}</td>
+                <td>{item.purchase_quantity || "N/A"}{item.purchase_unit || "N/A"}</td>
+                        <td>{item.cost || "N/A"}{item.cost_unit || "N/a"}</td>
                 <td>{item.supplier || "N/A"}</td>
               </tr>
             ))

@@ -7,7 +7,7 @@ import {
   Card,
   Form
 } from 'react-bootstrap';
-import { deleteparticularMaterialData, getallMaterialName,} from '../../services/allService';
+import { activeinactivem, deleteparticularMaterialData, getallMaterialName,} from '../../services/allService';
 import { useNavigate } from 'react-router-dom';
 
 import { toast } from 'react-toastify';
@@ -41,11 +41,27 @@ const Addmaterial = () => {
         const data = response.data || [];
         setmaterialData(data);
         setFilterData(data);
-        dispatch(storeallmaterial(data))
+        console.log("materialdata",data)
+        const updateMaterial=data.filter((item,index)=>item.isActive==true)
+        dispatch(storeallmaterial(updateMaterial))
 
       }
     } catch (error) {
       console.error('Error fetching stock inward data:', error);
+    }
+  };
+  const handlematerialtoggle = async (materialId, text) => {
+    try {
+      const payload = {
+        action: text
+      };
+      const response = await activeinactivem(materialId, payload);
+      if (response.status === 200) {
+        toast.success(`Account ${text === "active" ? "Active" : "Inactive"} Successfully`);
+        fetchmaterialData();
+      }
+    } catch (error) {
+      toast.error('Error toggling admin status');
     }
   };
 
@@ -164,9 +180,20 @@ const Addmaterial = () => {
                     <td>{item.description}</td>
                         <td>{item.type}</td>
                               <td>{item.createdBy.name}</td>
-                    {userRole === 'supervisior' && (
+               
                       <td>
-                        <Button
+                     
+                                                <div className='d-flex' style={{gap:"8px"}}>
+                                                {item.isActive === true ? (
+                                                  <Button variant="outline-primary" size="sm" onClick={() => handlematerialtoggle(item._id, "inactive")}>
+                                                    Inactive
+                                                  </Button>
+                                                ) : (
+                                                  <Button variant="outline-primary" size="sm" onClick={() => handlematerialtoggle(item._id, "active")}>
+                                                    Active
+                                                  </Button>
+                                                )}
+                                                <Button
                           variant="outline-primary"
                           size="sm"
                           onClick={() => handleEdit(item._id)}
@@ -174,15 +201,10 @@ const Addmaterial = () => {
                         >
                           Edit
                         </Button>
-                        {/* <Button
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => handleDeleteClick(item._id)}
-                        >
-                          Delete
-                        </Button> */}
+                                                </div>
+                                          
                       </td>
-                    )}
+                 
                   </tr>
                 ))
               )}
