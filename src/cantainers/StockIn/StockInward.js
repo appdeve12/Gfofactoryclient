@@ -74,26 +74,7 @@ const [popupShown, setPopupShown] = useState(false); // ✅ सिर्फ ए�
 
     return () => clearInterval(interval); // cleanup on unmount
   }, []);
-useEffect(() => {
-  if (stockInwardData.length > 0 && !popupShown) {
-    // latest added record
-    const latestItem = stockInwardData[stockInwardData.length - 1];
 
-    if (latestItem.status === "pending") {
-      setPopupItem(latestItem);
-      setShowPopup(true);
-      setPopupShown(true); // ✅ popup सिर्फ ek bar show hoga
-
-      // 10 minute timer
-      const timer = setTimeout(() => {
-        markdone(latestItem._id); // auto mark done
-        setShowPopup(false);
-      }, 10 * 60 * 1000); // 10 minutes in ms
-
-      return () => clearTimeout(timer);
-    }
-  }
-}, [stockInwardData, popupShown]);
 
   // Filter by search + date
   useEffect(() => {
@@ -123,6 +104,24 @@ useEffect(() => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
+useEffect(() => {
+  if (stockInwardData.length > 0) {
+    const latestItem = stockInwardData[stockInwardData.length - 1];
+
+    // Agar status "draft" hai aur abhi tak popup show nahi hua
+    if (
+      latestItem.status === "draft" &&
+      !localStorage.getItem(`popupShown_${latestItem._id}`)
+    ) {
+      setPopupItem(latestItem);
+      setShowPopup(true);
+      setPopupShown(true);
+
+      // localStorage me flag set
+      localStorage.setItem(`popupShown_${latestItem._id}`, "true");
+    }
+  }
+}, [stockInwardData]);
 
   const handleAddStock = () => {
     navigate("/dashboard/add-stock-inward");
@@ -436,15 +435,7 @@ useEffect(() => {
     <Button variant="secondary" onClick={() => setShowPopup(false)}>
       Close
     </Button>
-    <Button
-      variant="info"
-      onClick={() => {
-        navigate(`/dashboard/edit-stock-inward/${popupItem?._id}`);
-        setShowPopup(false);
-      }}
-    >
-      Edit
-    </Button>
+  
   </Modal.Footer>
 </Modal>
 

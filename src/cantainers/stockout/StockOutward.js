@@ -42,24 +42,21 @@ const [popupShown, setPopupShown] = useState(false);
     return new Date(dateString).toLocaleDateString();
   };
 useEffect(() => {
-  if (stockoutsData.length > 0 && !popupShown) {
+  if (stockoutsData.length > 0) {
     const latestItem = stockoutsData[stockoutsData.length - 1];
 
-    if (latestItem.status === "pending") {
+    // Agar status pending hai aur pehle se popup show nahi hua
+    if (latestItem.status === "pending" && !localStorage.getItem("popupShown")) {
       setPopupItem(latestItem);
       setShowPopup(true);
-      setPopupShown(true); // ✅ mark popup as shown
+      setPopupShown(true);
 
-      // 10 minute timer
-      const timer = setTimeout(() => {
-        handleMarkAsDone(latestItem._id); // auto mark done
-        setShowPopup(false);
-      }, 10 * 60 * 1000);
-
-      return () => clearTimeout(timer);
+      // localStorage me flag set
+      localStorage.setItem("popupShown", "true");
     }
   }
-}, [stockoutsData, popupShown]);
+}, [stockoutsData]);
+
 
 
 
@@ -388,27 +385,20 @@ useEffect(() => {
       </Card>
 <Modal show={showPopup} onHide={() => setShowPopup(false)} centered>
   <Modal.Header closeButton>
-    <Modal.Title>Time Alert</Modal.Title>
+    <Modal.Title>Info</Modal.Title>
   </Modal.Header>
   <Modal.Body>
-    You only have 10 minutes to edit this material: <b>{popupItem?.material_Name?.name}</b>.  
-    After that, it will automatically be marked as done.
+    This material <b>{popupItem?.material_Name?.name}</b> will be
+    automatically marked as <b>done</b> by the system after 10 minutes of creation.
   </Modal.Body>
   <Modal.Footer>
     <Button variant="secondary" onClick={() => setShowPopup(false)}>
       Close
     </Button>
-    <Button
-      variant="info"
-      onClick={() => {
-        navigate(`/dashboard/edit-stock-outward/${popupItem?._id}`);
-        setShowPopup(false);
-      }}
-    >
-      Edit
-    </Button>
+ 
   </Modal.Footer>
 </Modal>
+
 
 
     </Container>
