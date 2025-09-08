@@ -14,7 +14,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { BASE_URL } from '../../services/apiRoutes';
 import { useSelector } from 'react-redux';
-
+import { toast } from 'react-toastify';
 const StockOutward = () => {
   const userDt = useSelector(state => state.auth.userdata);
   const userRole = userDt?.user?.role;
@@ -145,12 +145,12 @@ useEffect(() => {
       const response = await markEDITREQUEST(id)
 
       if (response.status === 200) {
-        alert("Edit request sent successfully!");
+        toast.success("Edit request sent successfully!");
         fetchStockOutward();
       }
     } catch (error) {
       console.error("Edit request error:", error);
-      alert("Failed to send edit request.");
+      toast.error("Failed to send edit request.");
     }
   };
   const handleMarkAsDone = async (id) => {
@@ -159,12 +159,12 @@ useEffect(() => {
       const res = await markStockOutwardAsDone(id);
 
       if (res.status === 200) {
-        alert("Marked as done!");
+        toast.success("Marked as done!");
         fetchStockOutward();
       }
     } catch (error) {
       console.error("Error marking as done:", error);
-      alert("Failed to mark as done.");
+      toast.error("Failed to mark as done.");
     }
   };
   const handleApproveEditRequest = async (id) => {
@@ -173,12 +173,12 @@ useEffect(() => {
       const res = await markappovededitrequest(id);
 
       if (res.status === 200) {
-        alert("Marked as done!");
+        toast.success("Marked as done!");
         fetchStockOutward();
       }
     } catch (error) {
       console.error("Error marking as done:", error);
-      alert("Failed to mark as done.");
+      toast.error("Failed to mark as done.");
     }
   };
   return (
