@@ -164,7 +164,7 @@ const Addmaterial = () => {
                        <th>Type</th>
                          <th>Created By</th>
                 
-                {userRole === 'supervisior' && <th>Action</th>}
+      <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -186,11 +186,11 @@ const Addmaterial = () => {
                                                 <div className='d-flex' style={{gap:"8px"}}>
                                                 {item.isActive === true ? (
                                                   <Button variant="outline-primary" size="sm" onClick={() => handlematerialtoggle(item._id, "inactive")}>
-                                                    Inactive
+                                                Mark To Inactive
                                                   </Button>
                                                 ) : (
                                                   <Button variant="outline-primary" size="sm" onClick={() => handlematerialtoggle(item._id, "active")}>
-                                                    Active
+                                                  Mark To Active
                                                   </Button>
                                                 )}
                                                 <Button
