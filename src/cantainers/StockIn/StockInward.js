@@ -294,103 +294,176 @@ useEffect(() => {
   <td>{item.user?.name || 'N/A'}</td>
 
   {/* ✅ ACTIONS COLUMN */}
-  <td>
-    {userRole === 'supervisior' ? (
-      <>
-        {(item.status === "request-pending" || item.status === "edit-approved") && (
-          <>
-            {item.status === "edit-approved" && (
-              <Button
-                variant="outline-primary"
-                size="sm"
-                onClick={(e) =>{e.stopPropagation(); handleEdit(item._id)}}
-                className="me-2"
-              >
-                Edit
-              </Button>
-            )}
-
+{/* ✅ ACTIONS COLUMN */}
+<td>
+  {userRole === "supervisior" ? (
+    <>
+      {/* Supervisor handles requests and can edit their own */}
+      {(item.status === "request-pending" || item.status === "edit-approved") && (
+        <>
+          {item.status === "edit-approved" && (
             <Button
               variant="outline-primary"
               size="sm"
-              onClick={(e) =>{e.stopPropagation(); supervisioreditrequest(item._id)}}
-              className="me-2"
-              disabled={item.status=="edit-approved"}
-            >
-                 {item.status === "edit-approved" ? "Approved Request" : "Mark To Approve"}
-
-            </Button>
-          </>
-        )}
-
-     {(item?.createdByRole=='supervisior') &&     <Button
-                variant="outline-primary"
-                size="sm"
-                onClick={(e) =>{e.stopPropagation(); handleEdit(item._id)}}
-                className="me-2"
-              >
-                Edit
-              </Button>
-              }
-
-     
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={(e) => {e.stopPropagation(); handleDeleteClick(item._id);}}
-          >
-            Delete
-          </Button>
-           {item.status === "done" || item.status === "final-done" ? null : (
-          <Button
-            variant="outline-success"
-            size="sm"
-            onClick={(e) =>{e.stopPropagation(); markdone(item._id)}}
-               disabled={item.status === "request-pending"}
-          >
-            Mark Done
-          </Button>
-        )}
-      
-      </>
-    ) : (
-      <>
-        {item.status === "done" || item.status === "final-done" ? null : (
-          item.status === "edit-approved" ? (
-            <Button
-              variant="outline-primary"
-              size="sm"
-              onClick={(e) =>{e.stopPropagation(); handleEdit(item._id)}}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEdit(item._id);
+              }}
               className="me-2"
             >
               Edit
             </Button>
-          ) : (
-            <Button
-              variant="outline-warning"
-              size="sm"
-              onClick={(e) =>{e.stopPropagation(); makearequest(item._id)}}
-              className="me-2"
-                disabled={item.status === "request-pending"}
-            >
-              {item.status === "request-pending" ? "Request pending" : "Edit Request"}
-            </Button>
-          )
-        )}
+          )}
 
-        {item.status === "done" || item.status === "final-done" ? null : (
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              supervisioreditrequest(item._id);
+            }}
+            className="me-2"
+            disabled={item.status === "edit-approved"}
+          >
+            {item.status === "edit-approved" ? "Approved Request" : "Mark To Approve"}
+          </Button>
+        </>
+      )}
+
+      {/* Can edit if created by supervisor */}
+      {item.createdByRole === "supervisior" && (
+        <Button
+          variant="outline-primary"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEdit(item._id);
+          }}
+          className="me-2"
+        >
+          Edit
+        </Button>
+      )}
+
+      {/* Can always delete */}
+      <Button
+        variant="outline-danger"
+        size="sm"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDeleteClick(item._id);
+        }}
+      >
+        Delete
+      </Button>
+
+      {/* Can mark done if not already */}
+      {(item.status !== "done" && item.status !== "final-done") && (
+        <Button
+          variant="outline-success"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            markdone(item._id);
+          }}
+          disabled={item.status === "request-pending"}
+        >
+          Mark Done
+        </Button>
+      )}
+    </>
+  ) : (
+    <>
+      {/* USER ROLE = ADMIN */}
+
+      {/* Status: draft */}
+      {item.status === "draft" && (
+        <>
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(item._id);
+            }}
+            className="me-2"
+          >
+            Edit
+          </Button>
           <Button
             variant="outline-success"
             size="sm"
-            onClick={(e) =>{e.stopPropagation(); markdone(item._id)}}
-               disabled={item.status === "request-pending"}
+            onClick={(e) => {
+              e.stopPropagation();
+              markdone(item._id);
+            }}
           >
             Mark Done
           </Button>
-        )}
-      </>
-    )}
-  </td>
+        </>
+      )}
+
+      {/* Status: done (show edit request) */}
+      {item.status === "done" && item.createdByRole === "admin" && (
+        <Button
+          variant="outline-warning"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            makearequest(item._id);
+          }}
+          className="me-2"
+        >
+          Edit Request
+        </Button>
+      )}
+
+      {/* Status: request-pending (disable edit request button) */}
+      {item.status === "request-pending" && item.createdByRole === "admin" && (
+        <Button
+          variant="outline-warning"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            makearequest(item._id);
+          }}
+          className="me-2"
+          disabled
+        >
+          Request Pending
+        </Button>
+      )}
+
+      {/* Status: edit-approved */}
+      {item.status === "edit-approved" && (
+        <>
+          <Button
+            variant="outline-primary"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEdit(item._id);
+            }}
+            className="me-2"
+          >
+            Edit
+          </Button>
+          <Button
+            variant="outline-success"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              markdone(item._id);
+            }}
+          >
+            Mark Done
+          </Button>
+        </>
+      )}
+    </>
+  )}
+</td>
+
 </tr>
 
                 ))
