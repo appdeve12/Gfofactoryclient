@@ -42,17 +42,20 @@ const [popupShown, setPopupShown] = useState(false);
     return new Date(dateString).toLocaleDateString();
   };
 useEffect(() => {
+  debugger;
   if (stockoutsData.length > 0) {
     const latestItem = stockoutsData[stockoutsData.length - 1];
+    console.log("latestItem",latestItem)
 
     // Agar status pending hai aur pehle se popup show nahi hua
-    if (latestItem.status === "pending" && !localStorage.getItem("popupShown")) {
+    if (latestItem.status === "pending" && !localStorage.getItem("popup")) {
+      console.log("true")
       setPopupItem(latestItem);
       setShowPopup(true);
       setPopupShown(true);
 
       // localStorage me flag set
-      localStorage.setItem("popupShown", "true");
+      localStorage.setItem("popup", "true");
     }
   }
 }, [stockoutsData]);
