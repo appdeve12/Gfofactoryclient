@@ -97,7 +97,7 @@ navigate("/dashboard/stock-inward")
 
   const handleFile = async (e) => {
     const selectedFile = e.target.files[0];
-    if (!selectedFile) return alert("Please select a file");
+    if (!selectedFile) return toast.error("Please select a file");
 
     const uploadFormData = new FormData();
     uploadFormData.append('media', selectedFile);
@@ -119,10 +119,10 @@ navigate("/dashboard/stock-inward")
         file: [...(prev.file || []), fileMeta]
       }));
 
-      alert('File uploaded successfully');
+      toast.success('File uploaded successfully');
     } catch (err) {
       console.error(err);
-      alert('Upload failed');
+      toast.error('Upload failed');
     }
   };
 
