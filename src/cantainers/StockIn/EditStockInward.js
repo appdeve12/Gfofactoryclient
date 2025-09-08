@@ -103,7 +103,7 @@ navigate("/dashboard/stock-inward")
     uploadFormData.append('media', selectedFile);
 
     try {
-      const res = await axios.post('http://localhost:5050/upload', uploadFormData, {
+      const res = await axios.post('https://gfofactoryserver.onrender.com/upload', uploadFormData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
