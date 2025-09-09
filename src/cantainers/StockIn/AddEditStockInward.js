@@ -232,7 +232,7 @@ navigate("/dashboard/stock-inward")
                     </Col>
                     <Col md={4}>
   <Input
-    required
+ 
     label="Cost"
     type="number"
     placeholder="Cost"

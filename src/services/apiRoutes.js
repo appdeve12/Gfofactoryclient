@@ -30,7 +30,7 @@ UPDATE_PARTICULR_STOCK_OUTWARD:"/api/stockoutward/edit",
 MARK_STOCK_OUTWAD_DONE:"/api/stockoutward/mark-done",
 MARK_EDIT_STOCK_OUTWARD_REQUEST:"/api/stockoutward/request-edit",
 MART_APPROVED_STOCK_OUTWARD_REQUEST:"/api/stockoutward/approve-edit-request",
-
+  DELETE_PARTICULAR_STOCK_OUTWARD:"/api/stockoutward",
 //DASHBOARD STATS
 DASHBOARD_STATS:"/api/stock/autostock",
 //MATERIAL

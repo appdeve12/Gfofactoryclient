@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getallstockoutwards, getallstockoutwardsadmin, markappovededitrequest, markEDITREQUEST, markStockOutwardAsDone } from '../../services/allService';
+import { deleteparticularstockinward, deleteparticularstockoutward, getallstockoutwards, getallstockoutwardsadmin, markappovededitrequest, markEDITREQUEST, markStockOutwardAsDone } from '../../services/allService';
 import {
   Table,
   Button,
@@ -15,6 +15,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { BASE_URL } from '../../services/apiRoutes';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import DeleteModal from './DeleteStockOutward';
 const StockOutward = () => {
   const userDt = useSelector(state => state.auth.userdata);
   const userRole = userDt?.user?.role;
@@ -30,7 +31,8 @@ const [popupShown, setPopupShown] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedDeleteId, setSelectedDeleteId] = useState('');
   const rowsPerPage = 5;
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
@@ -42,7 +44,7 @@ const [popupShown, setPopupShown] = useState(false);
     return new Date(dateString).toLocaleDateString();
   };
 useEffect(() => {
-  debugger;
+
   if (stockoutsData.length > 0) {
     const latestItem = stockoutsData[stockoutsData.length - 1];
     console.log("latestItem",latestItem)
@@ -184,6 +186,32 @@ useEffect(() => {
       toast.error("Failed to mark as done.");
     }
   };
+
+    const handleDeleteClick = (id) => {
+      setSelectedDeleteId(id);
+      setDeleteModalOpen(true);
+    };
+  
+    const handleCloseModal = () => {
+      setDeleteModalOpen(false);
+      setSelectedDeleteId('');
+    };
+  
+    const handleConfirmDelete = async () => {
+      try {
+        if (selectedDeleteId) {
+          const response = await deleteparticularstockoutward(selectedDeleteId);
+          if (response.status === 200) {
+            toast.success("Deleted successfully");
+            fetchStockOutward();
+          }
+        }
+      } catch (error) {
+        toast.error("Failed to delete");
+      } finally {
+        handleCloseModal();
+      }
+    };
   return (
     <Container className="mt-4">
       <Card>
@@ -340,6 +368,8 @@ useEffect(() => {
                           >
                             Done
                           </Button>
+
+                       
                         </>
                       )}
                       {userRole === 'admin' && item.status === 'done' && (
@@ -360,6 +390,14 @@ useEffect(() => {
                           Approve Edit Request
                         </Button>
                       )}
+                               {userRole === 'supervisior' &&<Button
+                               style={{marginLeft:"3px"}}
+                            variant="success"
+                            size="sm"
+                            onClick={() => handleDeleteClick(item._id)}
+                          >
+                            Delete
+                          </Button>}
                     </td>
 
 
@@ -368,7 +406,13 @@ useEffect(() => {
               )}
             </tbody>
           </Table>
-
+      {deleteModalOpen && (
+        <DeleteModal
+          show={deleteModalOpen}
+          handleClose={handleCloseModal}
+          handleConfirm={handleConfirmDelete}
+        />
+      )}
           {/* Pagination */}
           {totalPages > 1 && (
             <Pagination className="justify-content-end">

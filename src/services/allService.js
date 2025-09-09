@@ -44,6 +44,9 @@ return axiosInstance.put(`${API_ROUTES.UPDATE_PARTICULR_STOCK_INWARD}/${id}`,for
 export const deleteparticularstockinward=(id)=>{
 return axiosInstance.delete(`${API_ROUTES.DELETE_PARTICULAR_STOCK_INWARD}/${id}`)
 }
+export const deleteparticularstockoutward=(id)=>{
+return axiosInstance.delete(`${API_ROUTES.DELETE_PARTICULAR_STOCK_OUTWARD}/${id}`)
+}
 export const deletematerialname=(id)=>{
 return axiosInstance.delete(`${API_ROUTES.DELETE_MATERIAL_NAME}/${id}`)
 }
